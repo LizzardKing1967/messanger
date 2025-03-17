@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Database Connection Info</title>
+</head>
+<body>
+<h1>Database Connection Information</h1>
+<div th:if="${error}">
+    <p style="color: red;" th:text="${error}"></p>
+</div>
+<div th:unless="${error}">
+    <p><strong>Database:</strong> <span th:text="${databaseName}"></span></p>
+    <p><strong>Driver:</strong> <span th:text="${driverName}"></span></p>
+    <p><strong>URL:</strong> <span th:text="${url}"></span></p>
+    <p><strong>Username:</strong> <span th:text="${username}"></span></p>
+</div>
+</body>
+</html>
