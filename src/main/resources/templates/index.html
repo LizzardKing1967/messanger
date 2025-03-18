@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление группами и пользователями</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .list {
+            margin-top: 20px;
+        }
+        .list div {
+            padding: 10px;
+            background: #ddd;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Создать пользователя</h2>
+    <input type="text" id="username" placeholder="Имя пользователя">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Пароль">
+    <input type="text" id="publicKey" placeholder="Публичный ключ">
+    <button onclick="createUser()">Создать</button>
+
+    <h2>Создать групповой чат</h2>
+    <input type="text" id="groupChatName" placeholder="Название чата">
+    <input type="text" id="groupPublicKey" placeholder="Публичный ключ">
+    <button onclick="createGroupChat()">Создать</button>
+
+    <h2>Список пользователей</h2>
+    <button onclick="loadUsers()">Загрузить</button>
+    <div id="userList" class="list"></div>
+
+    <h2>Список чатов</h2>
+    <button onclick="loadChats()">Загрузить</button>
+    <div id="chatList" class="list"></div>
+</div>
+
+<script>
+    function createUser() {
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const publicKey = document.getElementById("publicKey").value;
+
+        fetch(`/users/create?username=${username}&email=${email}&password=${password}&publicKey=${publicKey}&status=1`, { method: 'POST' })
+            .then(response => response.text())
+            .then(alert);
+    }
+
+    function createGroupChat() {
+        const groupChatName = document.getElementById("groupChatName").value;
+        const publicKey = document.getElementById("groupPublicKey").value;
+
+        fetch(`/chats/create?groupChatName=${groupChatName}&publicKey=${publicKey}`, { method: 'POST' })
+            .then(response => response.text())
+            .then(alert);
+    }
+
+    function loadUsers() {
+        fetch('/users/all')
+            .then(response => response.json())
+            .then(users => {
+                const userList = document.getElementById("userList");
+                userList.innerHTML = users.map(user => `<div>${user.username} - ${user.email}</div>`).join('');
+            });
+    }
+
+    function loadChats() {
+        fetch('/chats/all')
+            .then(response => response.json())
+            .then(chats => {
+                const chatList = document.getElementById("chatList");
+                chatList.innerHTML = chats.map(chat => `<div>${chat.groupChatName}</div>`).join('');
+            });
+    }
+</script>
+</body>
+</html>

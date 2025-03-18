@@ -1,4 +1,4 @@
-package com.project.messanger.controller;
+package com.project.messanger.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,21 +29,6 @@ public class InfoController {
         return "db-info"; // Имя шаблона Thymeleaf
     }
 
-    @GetMapping("/db-info2")
-    public String getDatabaseInfo2(Model model) {
-        String url = "jdbc:postgresql://localhost:5432/MessangerDB";
-        String username = "postgres";
-        String password = "82468246";
 
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            model.addAttribute("databaseName", connection.getMetaData().getDatabaseProductName());
-            model.addAttribute("driverName", connection.getMetaData().getDriverName() + " (DriverManager)");
-            model.addAttribute("url", connection.getMetaData().getURL());
-            model.addAttribute("username", connection.getMetaData().getUserName());
-        } catch (SQLException e) {
-            model.addAttribute("error", "Failed to connect to the database: " + e.getMessage());
-        }
-        return "db-info";
-    }
 }
 
