@@ -1,42 +1,68 @@
 package com.project.messanger.entity;
 
 import com.project.messanger.entity.compoundKeys.ParticipantInChatId;
-import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-
-@Entity
 @Data
-@Table(name = "participant_in_chat")
+
 public class ParticipantInChat {
-
-    @EmbeddedId
-    private ParticipantInChatId id; // Составной ключ
-
-    @Column(name = "creation_date", nullable = false)
-    private LocalDateTime creationDate;
-
-    @Column(name = "public_key", nullable = false)
+    private ParticipantInChatId id;
+    private LocalDate creationDate;
     private String publicKey;
-
-    @Column(name = "join_date", nullable = false)
-    private LocalDateTime joinDate;
-
-    @Column(name = "status", nullable = false)
+    private LocalDate joinDate;
     private int status;
 
-    // Конструкторы
     public ParticipantInChat() {}
 
-    public ParticipantInChat(ParticipantInChatId id, LocalDateTime creationDate, String publicKey, LocalDateTime joinDate, int status) {
+    public ParticipantInChat(ParticipantInChatId id, LocalDate creationDate,
+                             String publicKey, LocalDate joinDate, int status) {
         this.id = id;
         this.creationDate = creationDate;
         this.publicKey = publicKey;
         this.joinDate = joinDate;
         this.status = status;
+    }
 
+    // Getters and Setters
+    public ParticipantInChatId getId() {
+        return id;
+    }
+
+    public void setId(ParticipantInChatId id) {
+        this.id = id;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public LocalDate getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(LocalDate joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }
-

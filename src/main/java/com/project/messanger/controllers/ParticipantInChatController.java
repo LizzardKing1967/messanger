@@ -65,11 +65,13 @@ public class ParticipantInChatController {
 
     // Поиск участников по нику
 
+
     @GetMapping("/search")
-    public List<ParticipantInChat> searchParticipants(
+    public ResponseEntity<List<ParticipantInChat>> searchParticipants(
             @RequestParam String groupChatName,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String role) {
-        return participantInChatService.searchParticipants(username, role, groupChatName);
+        List<ParticipantInChat> result = participantInChatService.searchParticipants(username, role, groupChatName);
+        return ResponseEntity.ok(result);
     }
 }

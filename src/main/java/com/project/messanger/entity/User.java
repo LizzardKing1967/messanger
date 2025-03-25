@@ -1,17 +1,23 @@
 package com.project.messanger.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Data
-@Table(name = "\"user\"")
+
 public class User {
+    private String username;
+    private String email;
+    private String passwordHash;
+    private LocalDateTime dateOfRegistration;
+    private String publicKey;
+    private int status;
 
     public User() {}
-    public User(String username, String email, String passwordHash, LocalDateTime dateOfRegistration, String publicKey, int status) {
+
+    public User(String username, String email, String passwordHash,
+                LocalDateTime dateOfRegistration, String publicKey, int status) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -20,23 +26,52 @@ public class User {
         this.status = status;
     }
 
-    @Id
-    @Column(nullable = false, unique = true)
-    private String username;
+    // Getters and Setters
+    public String getUsername() {
+        return username;
+    }
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    @Column(nullable = false)
-    private String passwordHash;
+    public String getEmail() {
+        return email;
+    }
 
-    @Column(nullable = false)
-    private LocalDateTime dateOfRegistration;
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    @Column(nullable = false, unique = true)
-    private String publicKey;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
 
-    @Column(nullable = false)
-    private int status;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public LocalDateTime getDateOfRegistration() {
+        return dateOfRegistration;
+    }
+
+    public void setDateOfRegistration(LocalDateTime dateOfRegistration) {
+        this.dateOfRegistration = dateOfRegistration;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }
-

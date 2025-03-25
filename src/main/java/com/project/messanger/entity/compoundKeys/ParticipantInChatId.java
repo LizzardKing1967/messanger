@@ -1,24 +1,17 @@
 package com.project.messanger.entity.compoundKeys;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Data
 
-@Embeddable
 public class ParticipantInChatId implements Serializable {
-
-    @Column(name = "group_chat_name", nullable = false)
     private String groupChatName;
-
-    @Column(name = "username", nullable = false)
     private String username;
-
-    @Column(name = "role_name", nullable = false)
     private String role_name;
 
-    // Геттеры, сеттеры, equals и hashCode
     public String getGroupChatName() {
         return groupChatName;
     }
@@ -35,8 +28,12 @@ public class ParticipantInChatId implements Serializable {
         this.username = username;
     }
 
-    public void setRole(String role) {
-        this.role_name = role;
+    public String getRole_name() {
+        return role_name;
+    }
+
+    public void setRole_name(String role_name) {
+        this.role_name = role_name;
     }
 
     @Override
@@ -51,9 +48,5 @@ public class ParticipantInChatId implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(groupChatName, username);
-    }
-
-    public void setRole_name(String role) {
-        this.role_name =role;
     }
 }

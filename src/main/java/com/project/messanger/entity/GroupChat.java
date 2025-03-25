@@ -2,32 +2,44 @@ package com.project.messanger.entity;
 
 import lombok.Data;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
-@Table(name = "group_chat")
 public class GroupChat {
+    private String groupChatName;
+    private LocalDateTime creationDate;
+    private String publicKey;
 
     public GroupChat() {}
+
     public GroupChat(String groupChatName, LocalDateTime creationDate, String publicKey) {
         this.groupChatName = groupChatName;
         this.creationDate = creationDate;
         this.publicKey = publicKey;
     }
 
-    @Id
-    @Column(nullable = false, unique = true)
-    private String groupChatName;
+    // Getters and Setters
+    public String getGroupChatName() {
+        return groupChatName;
+    }
 
-    @Column(nullable = false)
-    private LocalDateTime creationDate;
+    public void setGroupChatName(String groupChatName) {
+        this.groupChatName = groupChatName;
+    }
 
-    @Column(nullable = false, unique = true)
-    private String publicKey;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
 }
-
