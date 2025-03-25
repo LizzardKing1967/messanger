@@ -40,6 +40,15 @@ public class ParticipantInChatController {
         return ResponseEntity.ok("Пользователь удален из чата.");
     }
 
+
+    @GetMapping("/filterByRole")
+    public ResponseEntity<List<ParticipantInChat>> getParticipantsByRole(
+            @RequestParam String groupChatName,
+            @RequestParam String role) {
+        List<ParticipantInChat> participants = participantInChatService.getParticipantsByRole(groupChatName, role);
+        return ResponseEntity.ok(participants);
+    }
+
     // Получить всех участников чата
     @GetMapping("/all")
     public ResponseEntity<List<ParticipantInChat>> getAllParticipantsInChat(@RequestParam String groupChatName) {
@@ -55,9 +64,12 @@ public class ParticipantInChatController {
     }
 
     // Поиск участников по нику
+
     @GetMapping("/search")
-    public ResponseEntity<List<ParticipantInChat>> searchParticipantsByUsername(@RequestParam String username) {
-        List<ParticipantInChat> participants = participantInChatService.searchParticipantsByUsername(username);
-        return ResponseEntity.ok(participants);
+    public List<ParticipantInChat> searchParticipants(
+            @RequestParam String groupChatName,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String role) {
+        return participantInChatService.searchParticipants(username, role, groupChatName);
     }
 }

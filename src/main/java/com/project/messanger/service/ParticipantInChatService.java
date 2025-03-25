@@ -61,4 +61,12 @@ public class ParticipantInChatService {
     public List<ParticipantInChat> searchParticipantsByUsername(String username) {
         return participantInChatRepository.findByUsernameContaining(username);
     }
+
+    public List<ParticipantInChat> getParticipantsByRole(String groupChatName, String role) {
+        return participantInChatRepository.findByGroupChatNameAndRole(groupChatName, role);
+    }
+
+    public List<ParticipantInChat> searchParticipants(String username, String role, String groupChat) {
+        return participantInChatRepository.findByDynamicQuery(username, role, groupChat);
+    }
 }

@@ -10,49 +10,54 @@
 <div class="container">
     <h1>Управление участниками чата</h1>
 
-    <!-- Форма для добавления пользователя -->
+    <!-- Выбор чата -->
     <div class="form-container">
-        <h2>Добавить пользователя</h2>
-        <div class="form-container">
-            <h2>Добавить пользователя</h2>
-            <form id="addUserForm">
-                <select id="groupChatName" required>
-                    <option value="">Выберите чат</option>
-                </select>
-                <select id="username" required>
-                    <option value="">Выберите пользователя</option>
-                </select>
-                <input type="text" id="role" placeholder="Роль" required>
-                <input type="text" id="publicKey" placeholder="Публичный ключ" required>
-                <input type="number" id="status" placeholder="Статус" required>
-                <button type="submit">Добавить</button>
-            </form>
-        </div>
+        <h2>Выберите чат</h2>
+        <select id="chatSelector">
+            <option value="">Выберите чат</option>
+        </select>
     </div>
 
-    <!-- Форма для удаления пользователя -->
+    <!-- Список пользователей выбранного чата -->
     <div class="form-container">
-        <h2>Удалить пользователя</h2>
-        <form id="removeUserForm">
-            <input type="text" id="removeGroupChatName" placeholder="Имя чата" required>
-            <input type="text" id="removeUsername" placeholder="Имя пользователя" required>
-            <button type="submit">Удалить</button>
+        <h2>Фильтр участников</h2>
+        <select id="roleFilter">
+            <option value="">Все роли</option>
+            <option value="admin">Администратор</option>
+            <option value="user">Пользователь</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Введите имя пользователя">
+        <h2>Участники чата</h2>
+        <div id="participantList"></div>
+    </div>
+
+
+    <!-- Добавление пользователя в чат -->
+    <div class="form-container">
+        <h2>Добавить пользователя</h2>
+        <form id="addUserForm">
+            <select id="username" required>
+                <option value="">Выберите пользователя</option>
+            </select>
+            <select id="role" required>
+                <option value="admin">Администратор</option>
+                <option value="user">Пользователь</option>
+            </select>
+            <input type="text" id="publicKey" placeholder="Публичный ключ" required>
+            <input type="number" id="status" placeholder="Статус" required>
+            <button type="submit">Добавить</button>
         </form>
     </div>
 
-    <!-- Поиск пользователей -->
+    <!-- Удаление пользователя из чата -->
     <div class="form-container">
-        <h2>Поиск пользователей</h2>
-        <input type="text" id="searchInput" placeholder="Введите имя пользователя">
-        <div id="searchResults"></div>
-    </div>
-
-    <!-- Список всех пользователей -->
-    <div class="form-container">
-        <h2>Все участники чата</h2>
-        <input type="text" id="chatNameInput" placeholder="Введите имя чата">
-        <button id="loadParticipantsButton">Загрузить</button>
-        <div id="participantList"></div>
+        <h2>Удалить пользователя</h2>
+        <form id="removeUserForm">
+            <select id="removeUsername" required>
+                <option value="">Выберите пользователя</option>
+            </select>
+            <button type="submit">Удалить</button>
+        </form>
     </div>
 </div>
 

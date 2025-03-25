@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ParticipantInChatRepository extends JpaRepository<ParticipantInChat, ParticipantInChatId> {
+public interface ParticipantInChatRepository extends JpaRepository<ParticipantInChat, ParticipantInChatId>, CustomParticipantInChatRepository  {
 
     // Найти всех участников в чате по имени чата
     List<ParticipantInChat> findById_GroupChatName(String groupChatName);
@@ -20,4 +20,12 @@ public interface ParticipantInChatRepository extends JpaRepository<ParticipantIn
     // Динамический поиск по нику пользователя
     @Query("SELECT p FROM ParticipantInChat p WHERE p.id.username LIKE %:username%")
     List<ParticipantInChat> findByUsernameContaining(@Param("username") String username);
+
+    @Query("SELECT p FROM ParticipantInChat p WHERE p.id.groupChatName = :groupChatName AND p.id.role_name = :role_name")
+    List<ParticipantInChat> findByGroupChatNameAndRole(
+            @Param("groupChatName") String groupChatName,
+            @Param("role_name") String role_name);
+
+
+
 }
