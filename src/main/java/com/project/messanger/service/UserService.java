@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -25,18 +26,19 @@ public class UserService {
             throw new RuntimeException("Пользователь с таким именем или email уже существует");
         }
 
-        User user = new User(
-                username,
-                email,
-                passwordEncoder.encode(password),
-                LocalDateTime.now(),
-                publicKey,
-                status
-        );
-        userRepository.save(user);
+        String encodedPassword = passwordEncoder.encode(password);
+        userRepository.saveUser(username, email, encodedPassword, publicKey, status);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

@@ -2,6 +2,7 @@ package com.project.messanger.entity;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -10,14 +11,14 @@ public class User {
     private String username;
     private String email;
     private String passwordHash;
-    private LocalDateTime dateOfRegistration;
+    private LocalDate dateOfRegistration;
     private String publicKey;
     private int status;
 
     public User() {}
 
     public User(String username, String email, String passwordHash,
-                LocalDateTime dateOfRegistration, String publicKey, int status) {
+                LocalDate dateOfRegistration, String publicKey, int status) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -51,11 +52,11 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public LocalDateTime getDateOfRegistration() {
+    public LocalDate getDateOfRegistration() {
         return dateOfRegistration;
     }
 
-    public void setDateOfRegistration(LocalDateTime dateOfRegistration) {
+    public void setDateOfRegistration(LocalDate dateOfRegistration) {
         this.dateOfRegistration = dateOfRegistration;
     }
 

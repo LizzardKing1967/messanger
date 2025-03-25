@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,23 +18,18 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
     public boolean existsByUsername(String username) {
-        String sql = "SELECT COUNT(*) FROM \"user\" WHERE username = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username);
-        return count != null && count > 0;
+        String sql = "SELECT EXISTS (SELECT 1 FROM public.get_user_by_login(?))";
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, username));
     }
-
 
     public boolean existsByEmail(String email) {
-        String sql = "SELECT COUNT(*) FROM \"user\" WHERE email = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
-        return count != null && count > 0;
+        String sql = "SELECT EXISTS (SELECT 1 FROM public.get_user_by_email(?))";
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, email));
     }
 
-
     public Optional<User> findByUsername(String username) {
-        String sql = "SELECT * FROM \"user\" WHERE username = ?";
+        String sql = "SELECT * FROM public.get_user_by_login(?)";
         try {
             User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), username);
             return Optional.ofNullable(user);
@@ -44,19 +38,20 @@ public class UserRepository {
         }
     }
 
-
-    public void save(User user) {
-        String sql = "INSERT INTO \"user\" (username, email, password_hash, date_of_registration, public_key, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                user.getUsername(),
-                user.getEmail(),
-                user.getPasswordHash(),
-                user.getDateOfRegistration(),
-                user.getPublicKey(),
-                user.getStatus());
+    public Optional<User> findByEmail(String email) {
+        String sql = "SELECT * FROM public.get_user_by_email(?)";
+        try {
+            User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), email);
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
+    public void saveUser(String username, String email, String passwordHash, String publicKey, int status) {
+        String sql = "CALL public.save_user(?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, username, email, passwordHash, publicKey, status);
+    }
 
     public List<User> findAll() {
         String sql = "SELECT * FROM \"user\"";
@@ -70,11 +65,11 @@ public class UserRepository {
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setPasswordHash(rs.getString("password_hash"));
-            user.setDateOfRegistration(
-                    rs.getDate("date_of_registration") != null ?
-                            rs.getDate("date_of_registration").toLocalDate().atStartOfDay() :
-                            null
-            );
+            if (rs.getMetaData().getColumnType(Integer.parseInt("date_of_registration")) == java.sql.Types.DATE) {
+                user.setDateOfRegistration(rs.getDate("date_of_registration").toLocalDate());
+            } else {
+                user.setDateOfRegistration(rs.getTimestamp("date_of_registration").toLocalDateTime().toLocalDate());
+            }
             user.setPublicKey(rs.getString("public_key"));
             user.setStatus(rs.getInt("status"));
             return user;
