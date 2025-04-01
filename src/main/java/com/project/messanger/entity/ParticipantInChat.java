@@ -13,6 +13,8 @@ public class ParticipantInChat {
     private String publicKey;
     private LocalDate joinDate;
     private int status;
+    private String email; // новое поле
+
 
     public ParticipantInChat() {}
 
@@ -34,6 +36,10 @@ public class ParticipantInChat {
         this.id = id;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public LocalDate getCreationDate() {
         return creationDate;
     }
@@ -46,6 +52,9 @@ public class ParticipantInChat {
         return publicKey;
     }
 
+    public String getEmail() {
+        return email;
+    }
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }

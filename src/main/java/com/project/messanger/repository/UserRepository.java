@@ -65,10 +65,13 @@ public class UserRepository {
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setPasswordHash(rs.getString("password_hash"));
-            if (rs.getMetaData().getColumnType(Integer.parseInt("date_of_registration")) == java.sql.Types.DATE) {
+            if (rs.getMetaData().getColumnType(rs.findColumn("date_of_registration")) == java.sql.Types.DATE) {
                 user.setDateOfRegistration(rs.getDate("date_of_registration").toLocalDate());
-            } else {
+            } else if (rs.getMetaData().getColumnType(rs.findColumn("date_of_registration")) == java.sql.Types.TIMESTAMP) {
                 user.setDateOfRegistration(rs.getTimestamp("date_of_registration").toLocalDateTime().toLocalDate());
+            } else {
+                // Обработка других типов или ошибка
+                throw new SQLException("Unsupported column type for date_of_registration");
             }
             user.setPublicKey(rs.getString("public_key"));
             user.setStatus(rs.getInt("status"));

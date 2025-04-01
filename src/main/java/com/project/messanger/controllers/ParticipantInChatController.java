@@ -70,6 +70,7 @@ public class ParticipantInChatController {
     public ResponseEntity<List<ParticipantInChat>> searchParticipants(
             @RequestParam String groupChatName,
             @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
             @RequestParam(required = false) String role) {
         List<ParticipantInChat> result = participantInChatService.searchParticipants(username, role, groupChatName);
         return ResponseEntity.ok(result);
