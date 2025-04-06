@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @GetMapping("/")
-    public String home() {
-        return "index";
+    public String redirectToIndex() {
+        return "redirect:/index"; // Перенаправление на /index
+    }
+
+    @GetMapping("/index")
+    public String showIndex() {
+        return "index"; // Возвращает index.html из templates
     }
 }

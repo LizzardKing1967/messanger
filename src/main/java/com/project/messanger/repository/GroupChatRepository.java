@@ -21,22 +21,27 @@ public class GroupChatRepository {
     }
 
     public boolean existsByGroupChatName(String groupChatName) {
-        String sql = "SELECT COUNT(*) FROM group_chat WHERE group_chat_name = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, groupChatName);
-        return count != null && count > 0;
+        return jdbcTemplate.queryForObject(
+                "SELECT check_group_chat_exists(?)",
+                Boolean.class,
+                groupChatName
+        );
     }
 
     public void save(GroupChat groupChat) {
-        String sql = "INSERT INTO group_chat (group_chat_name, creation_date, public_key) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql,
+        jdbcTemplate.update(
+                "CALL save_group_chat(?, ?, ?)",  // Изменено с SELECT на CALL
                 groupChat.getGroupChatName(),
                 groupChat.getCreationDate(),
-                groupChat.getPublicKey());
+                groupChat.getPublicKey()
+        );
     }
 
     public List<GroupChat> findAll() {
-        String sql = "SELECT * FROM group_chat";
-        return jdbcTemplate.query(sql, new GroupChatRowMapper());
+        return jdbcTemplate.query(
+                "SELECT * FROM get_all_group_chats()",
+                new GroupChatRowMapper()
+        );
     }
 
     private static class GroupChatRowMapper implements RowMapper<GroupChat> {

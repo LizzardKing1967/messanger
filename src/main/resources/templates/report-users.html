@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчет по пользователям</title>
+    <style>
+        .form-container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="date"], button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Отчет о зарегистрированных пользователях</h2>
+    <form method="post" th:action="@{/report}">
+        <div class="form-group">
+            <label for="startDate">Дата начала:</label>
+            <input id="startDate" type="date" th:name="startDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">Дата окончания:</label>
+            <input id="endDate" type="date" th:name="endDate" required>
+        </div>
+
+        <button type="submit">Сформировать отчет</button>
+    </form>
+</div>
+</body>
+</html>

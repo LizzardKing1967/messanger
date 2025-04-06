@@ -23,28 +23,39 @@ public class ParticipantInChatRepository {
 
 
     public List<ParticipantInChat> findById_GroupChatName(String groupChatName) {
-        String sql = "SELECT * FROM participant_in_chat WHERE group_chat_name = ?";
-        return jdbcTemplate.query(sql, new ParticipantInChatRowMapper(), groupChatName);
+        return jdbcTemplate.query(
+                "SELECT * FROM find_participants_by_chat(?)",
+                new ParticipantInChatRowMapper(),
+                groupChatName
+        );
     }
+
 
 
     public List<ParticipantInChat> findByRole(String role) {
-        String sql = "SELECT * FROM participant_in_chat WHERE role_name = ?";
-        return jdbcTemplate.query(sql, new ParticipantInChatRowMapper(), role);
+        return jdbcTemplate.query(
+                "SELECT * FROM find_participants_by_role(?)",
+                new ParticipantInChatRowMapper(),
+                role
+        );
     }
 
-
     public List<ParticipantInChat> findByUsernameContaining(String username) {
-        String sql = "SELECT * FROM participant_in_chat WHERE username LIKE ?";
-        return jdbcTemplate.query(sql, new ParticipantInChatRowMapper(), "%" + username + "%");
+        return jdbcTemplate.query(
+                "SELECT * FROM find_participants_by_username(?)",
+                new ParticipantInChatRowMapper(),
+                username
+        );
     }
 
 
     public List<ParticipantInChat> findByGroupChatNameAndRole(String groupChatName, String role_name) {
-        String sql = "SELECT * FROM participant_in_chat WHERE group_chat_name = ? AND role_name = ?";
-        return jdbcTemplate.query(sql, new ParticipantInChatRowMapper(), groupChatName, role_name);
+        return jdbcTemplate.query(
+                "SELECT * FROM find_participants_by_chat_and_role(?, ?)",
+                new ParticipantInChatRowMapper(),
+                groupChatName, role_name
+        );
     }
-
 
     public List<ParticipantInChat> findByDynamicQuery(String username, String role, String groupChat) {
         StringBuilder sql = new StringBuilder("SELECT * FROM participant_in_chat WHERE 1=1");
@@ -67,24 +78,27 @@ public class ParticipantInChatRepository {
     }
 
 
+
+
     public void save(ParticipantInChat participant) {
-        String sql = "INSERT INTO participant_in_chat (group_chat_name, username, role_name, " +
-                "creation_date, public_key, join_date, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
+        jdbcTemplate.update(
+                "CALL save_participant(?, ?, ?, ?, ?, ?, ?)",  // Изменено с SELECT на CALL
                 participant.getId().getGroupChatName(),
                 participant.getId().getUsername(),
                 participant.getId().getRole_name(),
                 participant.getCreationDate(),
                 participant.getPublicKey(),
                 participant.getJoinDate(),
-                participant.getStatus());
+                participant.getStatus()
+        );
     }
 
-
     public void deleteById(ParticipantInChatId id) {
-        String sql = "DELETE FROM participant_in_chat WHERE group_chat_name = ? AND username = ?";
-        jdbcTemplate.update(sql, id.getGroupChatName(), id.getUsername());
+        jdbcTemplate.update(
+                "CALL delete_participant(?, ?)",  // Изменено с SELECT на CALL
+                id.getGroupChatName(),
+                id.getUsername()
+        );
     }
 
     private static class ParticipantInChatRowMapper implements RowMapper<ParticipantInChat> {
