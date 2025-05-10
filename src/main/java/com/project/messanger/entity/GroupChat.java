@@ -8,15 +8,14 @@ import java.time.LocalDateTime;
 public class GroupChat {
     private String groupChatName;
     private LocalDateTime creationDate;
-    private String publicKey;
 
     public GroupChat() {}
 
-    public GroupChat(String groupChatName, LocalDateTime creationDate, String publicKey) {
+    public GroupChat(String groupChatName, LocalDateTime creationDate) {
         this.groupChatName = groupChatName;
         this.creationDate = creationDate;
-        this.publicKey = publicKey;
     }
+
 
     // Getters and Setters
     public String getGroupChatName() {
@@ -35,11 +34,4 @@ public class GroupChat {
         this.creationDate = creationDate;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
 }

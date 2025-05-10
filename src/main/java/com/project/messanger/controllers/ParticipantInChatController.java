@@ -20,16 +20,16 @@ public class ParticipantInChatController {
     }
 
     // Добавить пользователя в чат
-    @PostMapping("/add")
-    public ResponseEntity<String> addUserToChat(
-            @RequestParam String groupChatName,
-            @RequestParam String username,
-            @RequestParam String role,
-            @RequestParam String publicKey,
-            @RequestParam int status) {
-        participantInChatService.addUserToChat(groupChatName, role, username, publicKey, status);
-        return ResponseEntity.ok("Пользователь добавлен в чат.");
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<String> addUserToChat(
+//            @RequestParam String groupChatName,
+//            @RequestParam String username,
+//            @RequestParam String role,
+//            @RequestParam String publicKey,
+//            @RequestParam int status) {
+//        participantInChatService.addUserToChat(groupChatName, role, username, publicKey, status, "default");
+//        return ResponseEntity.ok("Пользователь добавлен в чат.");
+//    }
 
     // Удалить пользователя из чата
     @DeleteMapping("/remove")

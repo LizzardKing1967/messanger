@@ -2,11 +2,11 @@ package com.project.messanger.service;
 
 import com.project.messanger.entity.User;
 import com.project.messanger.repository.UserRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,17 +21,22 @@ public class UserService {
     }
 
     @Transactional
-    public void createUser(String username, String email, String password, String publicKey, int status) {
+    public void createUser(String username, String email, String password,
+                           String publicKey, int status, String name, String lastName) {
         if (userRepository.existsByUsername(username) || userRepository.existsByEmail(email)) {
             throw new RuntimeException("Пользователь с таким именем или email уже существует");
         }
 
         String encodedPassword = passwordEncoder.encode(password);
-        userRepository.saveUser(username, email, encodedPassword, publicKey, status);
+        userRepository.saveUser(username, email, encodedPassword, publicKey, status, name, lastName);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<User> getAllOtherUsersExceptCurrent(String currentUsername) {
+        return userRepository.findAllExceptCurrent(currentUsername);
     }
 
     public Optional<User> getUserByUsername(String username) {
@@ -41,4 +46,6 @@ public class UserService {
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    public String getPublicKeyByUsername(String username) {return userRepository.getPublicKeyByUsername(username);}
 }

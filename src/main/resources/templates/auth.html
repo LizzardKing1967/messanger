@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="/auth.css">
+    <script src="/keyUtils.js"></script>
+    <script src="/auth.js"></script>
+    <meta charset="UTF-8">
+    <title>Авторизация и Регистрация</title>
+</head>
+<body>
+<div class="auth-container">
+    <h2 id="form-title">Авторизация</h2>
+    <input type="text" id="username" placeholder="Имя пользователя" required>
+    <div class="error-field" id="error-username"></div>
+
+
+    <!-- Поля для регистрации (скрыты при авторизации) -->
+    <div id="register-fields" style="display: none;">
+        <input type="email" id="email" placeholder="Email" required>
+        <div class="error-field" id="error-email"></div>
+        <input type="text" id="first-name" placeholder="Имя" required>
+        <div class="error-field" id="error-firstName"></div>
+        <input type="text" id="last-name" placeholder="Фамилия" required>
+        <div class="error-field" id="error-lastName"></div>
+    </div>
+
+    <input type="password" id="password" placeholder="Пароль" required>
+    <div class="error-field" id="error-password"></div>
+    <button onclick="submitForm()">Войти</button>
+    <div class="switch-link" onclick="toggleForm()">Нет аккаунта? Зарегистрироваться</div>
+    <div id="message" class="message"></div>
+    <div id="error-message" class="error-message" style="display: none;"></div>
+</div>
+</body>
+</html>

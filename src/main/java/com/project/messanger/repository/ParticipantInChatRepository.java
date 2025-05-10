@@ -2,6 +2,7 @@ package com.project.messanger.repository;
 
 import com.project.messanger.entity.ParticipantInChat;
 import com.project.messanger.entity.compoundKeys.ParticipantInChatId;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +40,9 @@ public class ParticipantInChatRepository {
         );
     }
 
-    public List<ParticipantInChat> findByUsernameContaining(String username) {
+    public List<ParticipantInChat> findByUsername(String username) {
         return jdbcTemplate.query(
-                "SELECT * FROM find_participants_by_username(?)",
+                "SELECT * FROM participant_in_chat WHERE username = ?",
                 new ParticipantInChatRowMapper(),
                 username
         );
@@ -82,14 +82,15 @@ public class ParticipantInChatRepository {
 
     public void save(ParticipantInChat participant) {
         jdbcTemplate.update(
-                "CALL save_participant(?, ?, ?, ?, ?, ?, ?)",  // Изменено с SELECT на CALL
+                "INSERT INTO participant_in_chat (group_chat_name, username, role_name, join_date, status, encrypted_aes_key, key_version)" +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)",
                 participant.getId().getGroupChatName(),
                 participant.getId().getUsername(),
-                participant.getId().getRole_name(),
-                participant.getCreationDate(),
-                participant.getPublicKey(),
+                participant.getRole_name(),
                 participant.getJoinDate(),
-                participant.getStatus()
+                participant.getStatus(),
+                participant.getEncryptedKey(),
+                participant.getKeyVersion()
         );
     }
 
@@ -101,20 +102,37 @@ public class ParticipantInChatRepository {
         );
     }
 
+    public String findEncryptedAesKeyForParticipant(String username, String groupChatname) {
+        username = username.trim();
+        groupChatname = groupChatname.replace('\u00A0', ' ').trim();
+
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT encrypted_aes_key FROM participant_in_chat WHERE username = ? AND group_chat_name = ? LIMIT 1",
+                    String.class,
+                    username,
+                    groupChatname
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null; // или бросить исключение
+        }
+    }
+
     private static class ParticipantInChatRowMapper implements RowMapper<ParticipantInChat> {
         @Override
         public ParticipantInChat mapRow(ResultSet rs, int rowNum) throws SQLException {
             ParticipantInChatId id = new ParticipantInChatId();
             id.setGroupChatName(rs.getString("group_chat_name"));
             id.setUsername(rs.getString("username"));
-            id.setRole_name(rs.getString("role_name"));
 
             ParticipantInChat participant = new ParticipantInChat();
             participant.setId(id);
-            participant.setCreationDate(rs.getObject("creation_date", LocalDate.class));
-            participant.setPublicKey(rs.getString("public_key"));
+            participant.setRole_name(rs.getString("role_name"));
             participant.setJoinDate(rs.getObject("join_date", LocalDate.class));
             participant.setStatus(rs.getInt("status"));
+            participant.setEncryptedKey(rs.getString("encrypted_aes_key"));
+            participant.setKeyVersion(rs.getString("key_version"));
+
 
             return participant;
         }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление группами и пользователями</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="report.css">
+
+    <script src="user.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+</head>
+
+
+<header class="header">
+    <div class="header-container">
+        <div class="logo">Админ-панель мессенджера</div>
+        <div class="nav-buttons">
+            <a href="participants" class="nav-button">Управление участниками</a>
+            <a href="index" class="nav-button">Управление группами</a>
+        </div>
+    </div>
+</header>
+
+<body>
+<div class="container">
+    <h2>Создать пользователя</h2>
+    <input type="text" id="username" placeholder="Имя пользователя">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Пароль">
+    <input type="text" id="publicKey" placeholder="Публичный ключ">
+    <button onclick="createUser()">Создать</button>
+
+    <h2>Создать групповой чат</h2>
+    <input type="text" id="groupChatName" placeholder="Название чата">
+    <input type="text" id="groupPublicKey" placeholder="Публичный ключ">
+    <button onclick="createGroupChat()">Создать</button>
+
+    <h2>Список пользователей</h2>
+    <button onclick="loadUsers()">Загрузить</button>
+    <div id="userList" class="list"></div>
+
+    <h2>Список чатов</h2>
+    <button onclick="loadChats()">Загрузить</button>
+    <div id="chatList" class="list"></div>
+</div>
+
+<div class="form-container">
+    <h2>Генерация отчетов</h2>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <div class="report-actions">
+        <a href="/report-users" >
+            <i class="fas fa-file-pdf"></i> Перейти к созданию отчета
+        </a>
+
+    </div>
+</div>
+
+
+</body>
+<footer>
+    &copy; 2023 Мессенджер. Разработчик: Самсонов А.
+</footer>
+
+</html>

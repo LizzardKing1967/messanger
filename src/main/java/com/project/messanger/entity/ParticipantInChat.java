@@ -4,27 +4,37 @@ import com.project.messanger.entity.compoundKeys.ParticipantInChatId;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 @Data
 
 public class ParticipantInChat {
     private ParticipantInChatId id;
-    private LocalDate creationDate;
-    private String publicKey;
+    private String role_name;
+    private String encryptedKey;
     private LocalDate joinDate;
     private int status;
-    private String email; // новое поле
+    private String keyVersion;
+
 
 
     public ParticipantInChat() {}
 
-    public ParticipantInChat(ParticipantInChatId id, LocalDate creationDate,
-                             String publicKey, LocalDate joinDate, int status) {
+    public ParticipantInChat(ParticipantInChatId id, String role_name,
+                             String publicKey, LocalDate joinDate, int status, String keyVersion) {
         this.id = id;
-        this.creationDate = creationDate;
-        this.publicKey = publicKey;
+        this.role_name = role_name;
+        this.encryptedKey = publicKey;
         this.joinDate = joinDate;
         this.status = status;
+        this.keyVersion = keyVersion;
+    }
+
+    public String getRole_name() {
+        return role_name;
+    }
+
+    public void setRole_name(String role_name) {
+        this.role_name = role_name;
     }
 
     // Getters and Setters
@@ -32,31 +42,32 @@ public class ParticipantInChat {
         return id;
     }
 
+    public void setId(String groupChatName, String username) {
+        this.id.setUsername(username);
+        this.id.setGroupChatName(groupChatName);
+    }
+
+
     public void setId(ParticipantInChatId id) {
         this.id = id;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+
+    public String getEncryptedKey() {
+        return encryptedKey;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
+    public void setEncryptedKey(String encryptedKey) {
+        this.encryptedKey = encryptedKey;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
+
+    public String getKeyVersion() {
+        return keyVersion;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setKeyVersion(String keyVersion) {
+        this.keyVersion = keyVersion;
     }
 
     public LocalDate getJoinDate() {

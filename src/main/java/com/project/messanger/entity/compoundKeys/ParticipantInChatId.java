@@ -8,10 +8,17 @@ import java.util.Objects;
 @Data
 
 public class ParticipantInChatId implements Serializable {
+
     private String groupChatName;
     private String username;
-    private String role_name;
+    public ParticipantInChatId() {
+    }
 
+    // Конструктор с параметрами
+    public ParticipantInChatId(String groupChatName, String username) {
+        this.groupChatName = groupChatName;
+        this.username = username;
+    }
     public String getGroupChatName() {
         return groupChatName;
     }
@@ -26,14 +33,6 @@ public class ParticipantInChatId implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getRole_name() {
-        return role_name;
-    }
-
-    public void setRole_name(String role_name) {
-        this.role_name = role_name;
     }
 
     @Override

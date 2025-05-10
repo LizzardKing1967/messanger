@@ -1,67 +1,93 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Управление группами и пользователями</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Мессенджер</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js" onerror="console.error('SockJS загрузка не удалась');"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js" onerror="console.error('STOMP загрузка не удалась');"></script>
+    <script src="webSocket.js"></script>
+    <script src="keyUtils.js"></script>
+    <script src="index.js"></script>
     <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="report.css">
-
-    <script src="user.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
 </head>
-
-
+<body>
+<div class="branding">
+    <h1>Sam's Secure</h1>
+</div>
 <header class="header">
-    <div class="header-container">
-        <div class="logo">Админ-панель мессенджера</div>
-        <div class="nav-buttons">
-            <a href="participants" class="nav-button">Управление участниками</a>
-            <a href="index" class="nav-button">Управление группами</a>
-        </div>
+    <div class="tabs">
+        <button class="tab" onclick="switchTab('messages')">Сообщения</button>
+        <button class="tab" onclick="switchTab('friends')">Друзья</button>
+    </div>
+    <div class="actions">
+        <button id="profileBtn" class="profile-btn"></button>
+        <button class="logout-btn" onclick="logout()">Выйти</button>
     </div>
 </header>
 
-<body>
-<div class="container">
-    <h2>Создать пользователя</h2>
-    <input type="text" id="username" placeholder="Имя пользователя">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Пароль">
-    <input type="text" id="publicKey" placeholder="Публичный ключ">
-    <button onclick="createUser()">Создать</button>
+<main>
 
-    <h2>Создать групповой чат</h2>
-    <input type="text" id="groupChatName" placeholder="Название чата">
-    <input type="text" id="groupPublicKey" placeholder="Публичный ключ">
-    <button onclick="createGroupChat()">Создать</button>
+    <section id="chatsManagmentButtons" class="tab-content">
+        <div class="buttons-list" id="buttonsList">
+            <button onclick="openCreateChatModal()" class="create-chat-btn">Создать чат</button>
+        </div>
+    </section>
 
-    <h2>Список пользователей</h2>
-    <button onclick="loadUsers()">Загрузить</button>
-    <div id="userList" class="list"></div>
 
-    <h2>Список чатов</h2>
-    <button onclick="loadChats()">Загрузить</button>
-    <div id="chatList" class="list"></div>
-</div>
+    <section id="messages" class="tab-content">
+        <div class="chat-list" id="chatList">
+        </div>
+    </section>
 
-<div class="form-container">
-    <h2>Генерация отчетов</h2>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <div class="report-actions">
-        <a href="/report-users" >
-            <i class="fas fa-file-pdf"></i> Перейти к созданию отчета
-        </a>
+    <section id="friends" class="tab-content hidden">
+        <div class="friend-list">
 
+        </div>
+    </section>
+
+
+    <div id="createChatModal" class="modal create-chat-modal">
+        <div class="modal-content">
+            <button id="closeModal" class="close-btn">X</button>
+            <h2>Создание нового чата</h2>
+            <form id="createChatForm" onsubmit="createChat(event)">
+                <label>
+                    Название чата:
+                    <input type="text" id="chatName" required />
+                </label>
+
+                <label>Выберите участников:</label>
+                <div id="userList" class="user-list"></div>
+
+                <button type="submit">Создать</button>
+            </form>
+        </div>
     </div>
-</div>
 
+    <div class="modal-overlay" id="modalOverlay"></div>
 
-</body>
-<footer>
-    &copy; 2023 Мессенджер. Разработчик: Самсонов А.
+    <div id="chatMessagesModal" class="modal chat-messages-modal">
+        <div class="modal-content">
+            <button id="closeMessagesModal" class="close-btn">X</button>
+            <h2 id="chatMessagesTitle">Сообщения чата</h2>
+            <div id="chatMessagesContainer" class="chat-messages-container"></div>
+
+            <form id="sendMessageForm" onsubmit="sendMessage(event)">
+                <input type="text" id="messageInput" placeholder="Введите сообщение..." required />
+                <button type="submit" class="send-btn">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <p>© 2025 Sam's Secure. All rights reserved</p>
 </footer>
 
+</body>
 </html>

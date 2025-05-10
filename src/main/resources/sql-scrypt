@@ -1,0 +1,195 @@
+-- public.avaible_action определение
+
+-- Drop table
+
+-- DROP TABLE public.avaible_action;
+
+CREATE TABLE public.avaible_action (
+	action_name varchar(20) NOT NULL,
+	CONSTRAINT pk_avaible_action PRIMARY KEY (action_name)
+);
+
+
+-- public.configuration_properties определение
+
+-- Drop table
+
+-- DROP TABLE public.configuration_properties;
+
+CREATE TABLE public.configuration_properties (
+	configuration_name varchar(30) NOT NULL,
+	interface_language int4 NULL,
+	is_status_showed bool DEFAULT true NOT NULL,
+	is_invitible bool DEFAULT true NOT NULL,
+	CONSTRAINT ak_identifier_1_configur UNIQUE (configuration_name),
+	CONSTRAINT pk_configuration_properties PRIMARY KEY (configuration_name)
+);
+
+
+-- public.file определение
+
+-- Drop table
+
+-- DROP TABLE public.file;
+
+CREATE TABLE public.file (
+	file_name varchar(60) NOT NULL,
+	file_creator varchar(50) NOT NULL,
+	file_size float8 NULL,
+	loading_date date NULL,
+	file_hash varchar(250) NULL,
+	storage_path varchar(512) NOT NULL,
+	file_type int4 DEFAULT 1 NOT NULL,
+	iv varchar(24) NOT NULL,
+	CONSTRAINT pk_file PRIMARY KEY (file_name)
+);
+
+
+-- public.group_chat определение
+
+-- Drop table
+
+-- DROP TABLE public.group_chat;
+
+CREATE TABLE public.group_chat (
+	group_chat_name varchar(50) NOT NULL,
+	creation_date date NOT NULL,
+	CONSTRAINT pk_group_chat PRIMARY KEY (group_chat_name)
+);
+
+
+-- public."role" определение
+
+-- Drop table
+
+-- DROP TABLE public."role";
+
+CREATE TABLE public."role" (
+	role_name varchar(20) NOT NULL,
+	CONSTRAINT pk_role PRIMARY KEY (role_name)
+);
+
+
+-- public."user" определение
+
+-- Drop table
+
+-- DROP TABLE public."user";
+
+CREATE TABLE public."user" (
+	username varchar NOT NULL,
+	email varchar NOT NULL,
+	password_hash varchar NOT NULL,
+	date_of_registration date NOT NULL,
+	status int4 NOT NULL,
+	key_version int4 DEFAULT 1 NULL,
+	rsa_public_key text DEFAULT '1' NULL,
+	CONSTRAINT pk_user PRIMARY KEY (username)
+);
+
+
+-- public.file_in_chat определение
+
+-- Drop table
+
+-- DROP TABLE public.file_in_chat;
+
+CREATE TABLE public.file_in_chat (
+	username varchar(50) NOT NULL,
+	file_name varchar(60) NOT NULL,
+	group_chat_name varchar(50) NOT NULL,
+	creation_date date NULL,
+	encrypted_key varchar(50) NULL,
+	status int4 DEFAULT 1 NULL,
+	CONSTRAINT pk_file_in_chat PRIMARY KEY (username, file_name, group_chat_name),
+	CONSTRAINT fk_file_name FOREIGN KEY (file_name) REFERENCES public.file(file_name),
+	CONSTRAINT fk_group_chat_name FOREIGN KEY (group_chat_name) REFERENCES public.group_chat(group_chat_name),
+	CONSTRAINT fk_sender_name FOREIGN KEY (username) REFERENCES public."user"(username)
+);
+
+
+-- public.friendship определение
+
+-- Drop table
+
+-- DROP TABLE public.friendship;
+
+CREATE TABLE public.friendship (
+	username1 varchar(50) NOT NULL,
+	username2 varchar(50) NOT NULL,
+	friendship_status int4 DEFAULT 1 NOT NULL,
+	CONSTRAINT pk_friendship PRIMARY KEY (username1, username2),
+	CONSTRAINT fk_username FOREIGN KEY (username1) REFERENCES public."user"(username),
+	CONSTRAINT fk_username2 FOREIGN KEY (username2) REFERENCES public."user"(username)
+);
+
+
+-- public.notification определение
+
+-- Drop table
+
+-- DROP TABLE public.notification;
+
+CREATE TABLE public.notification (
+	file_name varchar(60) NOT NULL,
+	username varchar(50) NOT NULL,
+	group_chat_name varchar(50) NOT NULL,
+	creation_date date NULL,
+	notification_type int4 NULL,
+	notification_text varchar(50) NULL,
+	notification_data date NULL,
+	CONSTRAINT pk_notification PRIMARY KEY (file_name, username, group_chat_name),
+	CONSTRAINT fk_file_name FOREIGN KEY (file_name) REFERENCES public.file(file_name),
+	CONSTRAINT fk_receiver_name FOREIGN KEY (username) REFERENCES public."user"(username)
+);
+
+
+-- public.participant_in_chat определение
+
+-- Drop table
+
+-- DROP TABLE public.participant_in_chat;
+
+CREATE TABLE public.participant_in_chat (
+	group_chat_name varchar(50) NOT NULL,
+	username varchar(50) NOT NULL,
+	role_name varchar(20) NOT NULL,
+	join_date date NULL,
+	status int4 NULL,
+	encrypted_aes_key text DEFAULT '1' NOT NULL,
+	key_version text DEFAULT '1' NOT NULL,
+	CONSTRAINT pk_partipicant_in_chat PRIMARY KEY (group_chat_name, username),
+	CONSTRAINT fk_partipic_reference_group_ch FOREIGN KEY (group_chat_name) REFERENCES public.group_chat(group_chat_name),
+	CONSTRAINT fk_partipic_reference_user FOREIGN KEY (username) REFERENCES public."user"(username),
+	CONSTRAINT fk_role_name FOREIGN KEY (role_name) REFERENCES public."role"(role_name)
+);
+
+
+-- public.role_actions определение
+
+-- Drop table
+
+-- DROP TABLE public.role_actions;
+
+CREATE TABLE public.role_actions (
+	role_name varchar(20) NOT NULL,
+	action_name varchar(20) NOT NULL,
+	CONSTRAINT pk_role_actions PRIMARY KEY (role_name, action_name),
+	CONSTRAINT fk_action_name FOREIGN KEY (action_name) REFERENCES public.avaible_action(action_name),
+	CONSTRAINT fk_role_action_name FOREIGN KEY (role_name) REFERENCES public."role"(role_name)
+);
+
+
+-- public.userconfigurates определение
+
+-- Drop table
+
+-- DROP TABLE public.userconfigurates;
+
+CREATE TABLE public.userconfigurates (
+	username varchar(50) NOT NULL,
+	configuration_name varchar(30) NOT NULL,
+	CONSTRAINT pk_userconfigurates PRIMARY KEY (username, configuration_name),
+	CONSTRAINT fk_configuration_name FOREIGN KEY (configuration_name) REFERENCES public.configuration_properties(configuration_name),
+	CONSTRAINT fk_username_configuarates FOREIGN KEY (username) REFERENCES public."user"(username)
+);

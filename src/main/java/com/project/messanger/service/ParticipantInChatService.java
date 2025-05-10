@@ -16,19 +16,10 @@ public class ParticipantInChatService {
         this.participantInChatRepository = participantInChatRepository;
     }
 
-    public void addUserToChat(String groupChatName, String role, String username, String publicKey, int status) {
-        ParticipantInChatId id = new ParticipantInChatId();
-        id.setGroupChatName(groupChatName);
-        id.setUsername(username);
-        id.setRole_name(role);
 
-        ParticipantInChat participant = new ParticipantInChat(
-                id,
-                LocalDate.now(),
-                publicKey,
-                LocalDate.now(),
-                status
-        );
+
+    public void addUserToChat(ParticipantInChat participant) {
+        ParticipantInChatId id = new ParticipantInChatId();
         participantInChatRepository.save(participant);
     }
 
@@ -47,9 +38,6 @@ public class ParticipantInChatService {
         return participantInChatRepository.findByRole("user");
     }
 
-    public List<ParticipantInChat> searchParticipantsByUsername(String username) {
-        return participantInChatRepository.findByUsernameContaining(username);
-    }
 
     public List<ParticipantInChat> getParticipantsByRole(String groupChatName, String role) {
         return participantInChatRepository.findByGroupChatNameAndRole(groupChatName, role);
@@ -57,5 +45,16 @@ public class ParticipantInChatService {
 
     public List<ParticipantInChat> searchParticipants(String username, String role, String groupChat) {
         return participantInChatRepository.findByDynamicQuery(username, role, groupChat);
+    }
+
+    public String getChatEncryptedAesKeyForParticipant(String username, String groupChatname)
+    {
+        String encryptedKey = participantInChatRepository.findEncryptedAesKeyForParticipant(username, groupChatname);
+        return  encryptedKey;
+    }
+
+    public List<ParticipantInChat> getParticipantByName(String username)
+    {
+        return participantInChatRepository.findByUsername(username);
     }
 }

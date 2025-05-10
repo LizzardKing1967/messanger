@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Мессенджер</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          font-family: 'Inter', sans-serif;
+        }
+        body {
+          background-color: #f4f5f9;
+          color: #333;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
+        .branding {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          background-color: #ffffff;
+          border-bottom: 1px solid #e5e7eb;
+        }
+        .branding img {
+          height: 150px;
+          width: 150px;
+          margin-right: 1rem;
+        }
+        .branding h1 {
+          font-size: 2rem;
+          font-family: 'Pacifico', cursive;
+          font-weight: 400;
+          color: #4f46e5;
+        }
+        header.header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #ffffff;
+          padding: 1rem 2rem;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .tabs {
+          display: flex;
+          gap: 1rem;
+        }
+        .modal {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          background-color: rgba(0, 0, 0, 0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: white;
+          padding: 2rem;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 500px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+
+        .modal-content h2 {
+          margin-bottom: 1rem;
+        }
+
+        .friend-selection {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin: 1rem 0;
+        }
+
+        .modal-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+          margin-top: 1rem;
+        }
+
+        .red {
+          background: #ef4444;
+        }
+        .red:hover {
+          background: #dc2626;
+        }
+
+        .hidden {
+          display: none;
+        }
+        .tab {
+          background: transparent;
+          border: none;
+          font-size: 1rem;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          transition: background 0.2s;
+          cursor: pointer;
+        }
+        .tab:hover {
+          background: #e0e7ff;
+        }
+        .actions {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .circle-btn, .profile-btn {
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 9999px;
+          background: #6366f1;
+          color: white;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.3s;
+        }
+        .circle-btn:hover, .profile-btn:hover {
+          background: #4f46e5;
+        }
+        main {
+          flex: 1;
+          padding: 2rem;
+          display: flex;
+          gap: 1rem;
+        }
+        .create-chat-btn {
+          background: #22c55e;
+          color: white;
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .chat-list, .friend-list {
+          background: white;
+          padding: 1rem;
+          border-radius: 12px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          width: 300px;
+          height: calc(100vh - 250px);
+          overflow-y: auto;
+        }
+        .search-bar {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+        .search-bar input[type="text"] {
+          padding: 0.5rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          flex: 1;
+        }
+        .search-bar label, .search-bar button {
+          font-size: 0.9rem;
+        }
+        .search-bar button {
+          padding: 0.4rem 0.8rem;
+          background: #3b82f6;
+          border: none;
+          color: white;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+        .tab-content.hidden {
+          display: none;
+        }
+        footer.footer {
+          background: #ffffff;
+          padding: 1rem;
+          text-align: center;
+          font-size: 0.875rem;
+          color: #777;
+          border-top: 1px solid #e5e7eb;
+        }
+
+        .chat-item {
+          margin-bottom: 1rem;
+          padding: 0.5rem;
+          cursor: pointer;
+          border-radius: 8px;
+          transition: background 0.2s;
+        }
+        .chat-item:hover {
+          background: #f3f4f6;
+        }
+        .chat-item.active {
+          background: #e0e7ff;
+        }
+        .chat-item strong {
+          font-size: 1.05rem;
+          color: #1f2937;
+        }
+        .chat-item span {
+          color: #6b7280;
+          font-size: 0.9rem;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        /* Стили для формы создания чата */
+        .create-chat-form {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 12px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          margin-bottom: 1rem;
+        }
+
+        .create-chat-form h3 {
+          margin-bottom: 1rem;
+          color: #1f2937;
+        }
+
+        .form-group {
+          margin-bottom: 1rem;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          color: #4b5563;
+        }
+
+        .form-group input[type="text"] {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          font-size: 1rem;
+        }
+
+        .form-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+          margin-top: 1rem;
+        }
+
+        .form-actions button {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .form-actions button[type="submit"] {
+          background: #22c55e;
+          color: white;
+        }
+
+        .form-actions button[type="submit"]:hover {
+          background: #16a34a;
+        }
+
+        .form-actions button[type="button"] {
+          background: #e5e7eb;
+          color: #4b5563;
+        }
+
+        .form-actions button[type="button"]:hover {
+          background: #d1d5db;
+        }
+
+        /* Стили для окна переписки */
+        .chat-window {
+          flex: 1;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          display: flex;
+          flex-direction: column;
+          height: calc(100vh - 250px);
+        }
+
+        .chat-header {
+          padding: 1rem;
+          border-bottom: 1px solid #e5e7eb;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .chat-header h3 {
+          color: #1f2937;
+        }
+
+        .chat-messages {
+          flex: 1;
+          padding: 1rem;
+          overflow-y: auto;
+        }
+
+        .message {
+          margin-bottom: 1rem;
+          max-width: 70%;
+          padding: 0.75rem 1rem;
+          border-radius: 12px;
+          position: relative;
+        }
+
+        .message-incoming {
+          background: #f3f4f6;
+          align-self: flex-start;
+          border-bottom-left-radius: 4px;
+        }
+
+        .message-outgoing {
+          background: #6366f1;
+          color: white;
+          align-self: flex-end;
+          border-bottom-right-radius: 4px;
+          margin-left: auto;
+        }
+
+        .message-sender {
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+          font-size: 0.85rem;
+        }
+
+        .message-time {
+          font-size: 0.75rem;
+          color: #9ca3af;
+          text-align: right;
+          margin-top: 0.25rem;
+        }
+
+        .message-outgoing .message-time {
+          color: #e5e7eb;
+        }
+
+        .chat-input {
+          padding: 1rem;
+          border-top: 1px solid #e5e7eb;
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
+        }
+
+        .chat-input textarea {
+          flex: 1;
+          padding: 0.75rem;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          resize: none;
+          min-height: 50px;
+          max-height: 150px;
+          font-family: 'Inter', sans-serif;
+        }
+
+        .friend-item {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.friend-item button {
+  margin-top: 0.4rem;
+  margin-right: 0.5rem;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.friend-item button:hover {
+  background: #4f46e5;
+}
+
+.status {
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}
+
+.status.online {
+  color: green;
+}
+
+.notifications {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+}
+
+.notifications h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.notification-item {
+  background: #f3f4f6;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #374151;
+  border-left: 4px solid #6366f1;
+}
+
+.notifications button {
+  margin-top: 0.5rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.notifications button:hover {
+  background-color: #dc2626;
+}
+
+.status.offline {
+  color: gray;
+}
+
+.search-results {
+  margin-top: 1rem;
+}
+
+.search-result-item {
+  background: #f9fafb;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+        .chat-input button {
+          padding: 0 1.5rem;
+          background: #6366f1;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          height: 40px;
+        }
+
+        .chat-input button:hover {
+          background: #4f46e5;
+        }
+
+        .no-chat-selected {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
+          color: #6b7280;
+          font-size: 1.1rem;
+        }
+
+        .chat-participants {
+          font-size: 0.85rem;
+          color: #6b7280;
+        }
+
+        /* Стили для кнопки прикрепления файла */
+        .attach-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          font-size: 1.2rem;
+          color: #6b7280;
+          padding: 0.5rem;
+          border-radius: 50%;
+          transition: background 0.2s;
+        }
+
+        .attach-btn:hover {
+          background: #f3f4f6;
+          color: #4f46e5;
+        }
+
+        /* Стили для модального окна ролей */
+        .roles-list {
+          margin: 1rem 0;
+        }
+
+        .role-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .role-select {
+          padding: 0.25rem;
+          border-radius: 4px;
+          border: 1px solid #d1d5db;
+        }
+
+        /* Стили для файлов в сообщениях */
+        .file-message {
+          display: flex;
+          align-items: center;
+          padding: 0.5rem;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 6px;
+          margin-top: 0.5rem;
+        }
+
+        .file-icon {
+          margin-right: 0.5rem;
+          font-size: 1.2rem;
+        }
+
+        .file-name {
+          font-size: 0.85rem;
+          text-decoration: underline;
+        }
+
+        /* Стили для поиска сообщений */
+        .message-search {
+          padding: 1rem;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .search-filters {
+          display: flex;
+          gap: 1rem;
+          margin-top: 0.5rem;
+        }
+
+        .search-filters input, .search-filters select {
+          padding: 0.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+        }
+
+        .search-results-info {
+          font-size: 0.85rem;
+          color: #6b7280;
+          margin-top: 0.5rem;
+        }
+
+        .highlight {
+          background-color: #fef08a;
+          padding: 0 2px;
+          border-radius: 2px;
+        }
+
+        /* Стили для кнопки удаления участника */
+        .remove-user-btn {
+          background: transparent;
+          border: none;
+          color: #ef4444;
+          cursor: pointer;
+          margin-left: 0.5rem;
+        }
+
+        /* Стили для подтверждения удаления */
+        .confirmation-modal {
+          text-align: center;
+        }
+
+        .confirmation-modal p {
+          margin-bottom: 1.5rem;
+        }
+
+        .confirmation-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+        }
+
+        .settings-panel {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.settings-panel h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #4f46e5;
+}
+
+.settings-panel label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.settings-panel input[type="text"],
+.settings-panel select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.settings-panel button {
+  background-color: #6366f1;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.settings-panel button:hover {
+  background-color: #4f46e5;
+}
+    </style>
+</head>
+<body>
+<div class="branding">
+    <h1>Sam's Secure</h1>
+</div>
+<header class="header">
+    <div class="tabs">
+        <button class="tab" onclick="switchTab('messages')">Сообщения</button>
+        <button class="tab" onclick="switchTab('friends')">Друзья</button>
+    </div>
+    <div class="actions">
+        <button class="circle-btn">🔔</button>
+        <button class="profile-btn">Alexey Samsonov</button>
+        <button class="circle-btn" onclick="switchTab('settings')">⚙️</button>
+        <button class="circle-btn">⎋</button>
+    </div>
+</header>
+
+<main>
+
+    <section id="settings" class="tab-content hidden">
+        <div class="settings-panel">
+            <h2>⚙️ Настройки</h2>
+
+            <label>
+                Пресет настроек:
+                <select id="presetSelect" onchange="applyPreset(this.value)">
+                    <option value="custom">🎨 Своя настройка</option>
+                    <option value="default">🎛️ Обычный</option>
+                    <option value="stealth">🕵️‍♂️ Скрытный</option>
+                </select>
+            </label>
+
+            <form onsubmit="saveSettings(event)" id="settingsForm">
+                <label>
+                    Имя пользователя:
+                    <input type="text" id="usernameInput" placeholder="Введите новое имя" required />
+                </label>
+
+                <label>
+                    Язык интерфейса:
+                    <select id="languageSelect">
+                        <option value="0">Русский</option>
+                        <option value="1">Английский</option>
+                    </select>
+                </label>
+
+                <label>
+                    <input type="checkbox" id="statusCheckbox" checked />
+                    Показывать статус
+                </label>
+
+                <label>
+                    <input type="checkbox" id="invitableCheckbox" checked />
+                    Разрешить приглашения в друзья
+                </label>
+
+                <button type="submit">Сохранить</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="messages" class="tab-content">
+        <div style="display: flex; gap: 1rem;">
+            <div style="width: 300px;">
+                <button class="create-chat-btn" onclick="openModal('create-chat-modal')">Создать групповой чат</button>
+                <div class="chat-list" id="chat-list">
+                    <div class="chat-item" data-chat-id="work" onclick="selectChat('work')">
+                        <strong>🌐 Работа</strong>
+                        <span>Сергей: Привет, сделайте юнит тесты</span>
+                    </div>
+                    <hr/>
+                    <div class="chat-item" data-chat-id="family" onclick="selectChat('family')">
+                        <strong>👨‍👩‍👧‍👦 Семейный чат</strong>
+                        <span>Мама: Нужно покормить кошку</span>
+                    </div>
+                    <hr/>
+                    <div class="chat-item" data-chat-id="friends" onclick="selectChat('friends')">
+                        <strong>Друзья</strong>
+                        <span>Влад: Пойдем гулять?</span>
+                    </div>
+                    <hr/>
+                    <div class="chat-item" data-chat-id="study" onclick="selectChat('study')">
+                        <strong>📚 Учебная группа</strong>
+                        <span>Алексей: Нужно срочно сдать курсач!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-window" id="chat-window">
+                <div class="no-chat-selected" id="no-chat">
+                    <p>Выберите чат для просмотра сообщений</p>
+                </div>
+
+                <!-- Шаблон активного чата (изначально скрыт) -->
+                <div id="active-chat" class="hidden">
+                    <div class="chat-header">
+                        <div>
+                            <h3 id="chat-title">Название чата</h3>
+                            <div class="chat-participants" id="chat-participants">Участники: 5</div>
+                        </div>
+                        <button class="circle-btn" onclick="openModal('group-settings-modal')">⚙️</button>
+                    </div>
+
+                    <div class="message-search">
+                        <input type="text" id="search-messages" placeholder="Поиск по сообщениям..." style="width: 100%;">
+                        <div class="search-filters">
+                            <input type="date" id="date-from" placeholder="От">
+                            <input type="date" id="date-to" placeholder="До">
+                            <select id="sender-filter">
+                                <option value="">Все отправители</option>
+                            </select>
+                        </div>
+                        <div class="search-results-info" id="search-results-info"></div>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Сообщения будут добавляться здесь -->
+                    </div>
+
+                    <div class="chat-input">
+                        <button class="attach-btn" title="Прикрепить файл" onclick="document.getElementById('file-input').click()">📎</button>
+                        <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
+                        <textarea placeholder="Напишите сообщение..." id="message-input"></textarea>
+                        <button onclick="sendMessage()">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="friends" class="tab-content hidden">
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск по имени или статусу..." />
+            <label><input type="checkbox" /> В сети</label>
+            <button>Добавить друга</button>
+        </div>
+        <div class="friend-list">
+            <div class="friend-item">
+                <strong>Анна Иванова</strong><span class="status online">в сети</span><br/>
+                <button onclick="messageUser('Анна Иванова')">✉ Написать</button>
+                <button onclick="removeFriend('Анна Иванова')">❌ Удалить</button>
+            </div>
+            <hr/>
+            <div class="friend-item">
+                <strong>Павел Смирнов</strong><span class="status offline">не в сети</span><br/>
+                <button onclick="messageUser('Павел Смирнов')">✉ Написать</button>
+                <button onclick="removeFriend('Павел Смирнов')">❌ Удалить</button>
+            </div>
+            <hr/>
+            <div class="friend-item">
+                <strong>Елена Котова</strong><span class="status online">в сети</span><br/>
+                <button onclick="messageUser('Елена Котова')">✉ Написать</button>
+                <button onclick="removeFriend('Елена Котова')">❌ Удалить</button>
+            </div>        </div>
+    </section>
+
+    <!-- Модальное окно: Создать новый чат -->
+    <div id="create-chat-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Создать новый чат</h2>
+            <form id="new-chat-form" class="create-chat-form">
+                <div class="form-group">
+                    <label for="chat-name">Название чата</label>
+                    <input type="text" id="chat-name" placeholder="Введите название чата" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Участники</label>
+                    <div class="friend-selection">
+                        <label><input type="checkbox" /> Алексей Петров</label>
+                        <label><input type="checkbox" /> Мария Иванова</label>
+                        <label><input type="checkbox" /> Виталий Смирнов</label>
+                        <label><input type="checkbox" /> Екатерина Волкова</label>
+                        <label><input type="checkbox" /> Дмитрий Соколов</label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="circle-btn" onclick="closeModal('create-chat-modal')">Отмена</button>
+                    <button type="submit" class="profile-btn">Создать чат</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="search-panel">
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Введите имя для поиска..." oninput="filterUsers()"/>
+        <label><input type="checkbox" id="onlineOnly" onchange="filterUsers()" /> Только в сети</label>
+    </div>
+    <div id="searchResults" class="search-results">
+        <!-- динамически найденные пользователи появятся здесь -->
+    </div>
+    </div>
+
+    <div class="notifications">
+        <h2>🔔 Уведомления</h2>
+        <div id="notificationList">
+            <div class="notification-item">Новое сообщение в чате: Работа</div>
+            <div class="notification-item">Павел Смирнов принял приглашение</div>
+            <div class="notification-item">Виктория Соловьева добавила вас в друзья</div>
+        </div>
+        <button onclick="clearNotifications()">Очистить</button>
+    </div>
+
+    <!-- Модальное окно: Добавить друзей в чат -->
+    <div id="add-friends-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Добавить участников</h2>
+            <input type="text" placeholder="Поиск друзей..." />
+            <div class="friend-selection">
+                <label><input type="checkbox" /> Алексей Петров</label>
+                <label><input type="checkbox" /> Мария Иванова</label>
+                <label><input type="checkbox" /> Виталий Смирнов</label>
+            </div>
+            <div class="modal-actions">
+                <button class="circle-btn" onclick="closeModal('add-friends-modal')">Отмена</button>
+                <button class="profile-btn">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Настройки группового чата -->
+    <div id="group-settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Настройки чата</h2>
+            <label>Название чата</label>
+            <input type="text" id="chat-name-input" value="Геймеры" />
+            <div class="modal-actions">
+                <button class="profile-btn" onclick="saveChatSettings()">Сохранить</button>
+            </div>
+            <hr/>
+            <button class="circle-btn" onclick="openModal('roles-modal')">Назначить роли</button>
+            <button class="circle-btn" onclick="generateChatReport()">Генерация отчёта</button>
+            <button class="circle-btn red" onclick="confirmDeleteChat()">Удалить чат</button>
+            <button class="circle-btn">Покинуть чат</button>
+            <button class="circle-btn" onclick="openModal('add-friends-modal')">Добавить участников</button>
+            <button class="circle-btn" onclick="openModal('remove-participants-modal')">Удалить участников</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Назначение ролей -->
+    <div id="roles-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Назначение ролей</h2>
+            <div class="roles-list">
+                <div class="role-item">
+                    <span>Алексей Петров</span>
+                    <select class="role-select">
+                        <option>Участник</option>
+                        <option>Модератор</option>
+                        <option>Администратор</option>
+                    </select>
+                </div>
+                <div class="role-item">
+                    <span>Мария Иванова</span>
+                    <select class="role-select">
+                        <option>Участник</option>
+                        <option selected>Модератор</option>
+                        <option>Администратор</option>
+                    </select>
+                </div>
+                <div class="role-item">
+                    <span>Виталий Смирнов</span>
+                    <select class="role-select">
+                        <option>Участник</option>
+                        <option>Модератор</option>
+                        <option selected>Администратор</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="circle-btn" onclick="closeModal('roles-modal')">Отмена</button>
+                <button class="profile-btn" onclick="saveRoles()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Удаление участников -->
+    <div id="remove-participants-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Удаление участников</h2>
+            <div class="friend-selection">
+                <div class="role-item">
+                    <span>Алексей Петров</span>
+                    <button class="remove-user-btn" onclick="confirmRemoveUser('Алексей Петров')">× Удалить</button>
+                </div>
+                <div class="role-item">
+                    <span>Мария Иванова</span>
+                    <button class="remove-user-btn" onclick="confirmRemoveUser('Мария Иванова')">× Удалить</button>
+                </div>
+                <div class="role-item">
+                    <span>Виталий Смирнов</span>
+                    <button class="remove-user-btn" onclick="confirmRemoveUser('Виталий Смирнов')">× Удалить</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="circle-btn" onclick="closeModal('remove-participants-modal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения -->
+    <div id="confirmation-modal" class="modal hidden">
+        <div class="modal-content confirmation-modal">
+            <h2 id="confirmation-title">Подтверждение</h2>
+            <p id="confirmation-message">Вы уверены, что хотите выполнить это действие?</p>
+            <div class="confirmation-buttons">
+                <button class="circle-btn red" id="confirm-action-btn">Да</button>
+                <button class="circle-btn" onclick="closeModal('confirmation-modal')">Нет</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2025 Sam's Secure. All rights reserved</p>
+</footer>
+
+<!-- Окно с отчётом (изначально скрыто) -->
+<div id="report-window" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; padding: 2rem; overflow: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>Отчёт по чату</h2>
+        <button onclick="closeReport()" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">Закрыть</button>
+    </div>
+    <div id="report-content"></div>
+</div>
+
+<script>
+    // Демонстрационные данные чатов
+    const chats = {
+        work: {
+            title: "🌐 Работа",
+            participants: "Участники: Сергей (админ), Мария, Алексей, Виталий",
+            admin: "Сергей",
+            messages: [
+                { sender: "Сергей", text: "Привет, сделайте юнит тесты", time: "2023-05-10T10:30:00", outgoing: false },
+                { sender: "Вы", text: "Уже работаю над ними", time: "2023-05-10T10:32:00", outgoing: true },
+                { sender: "Мария", text: "Когда дедлайн?", time: "2023-05-10T10:35:00", outgoing: false },
+                { sender: "Сергей", text: "До конца недели", time: "2023-05-10T10:36:00", outgoing: false },
+                {
+                    sender: "Алексей",
+                    text: "Вот файл с требованиями",
+                    time: "2023-05-10T10:40:00",
+                    outgoing: false,
+                    file: { name: "Требования.pdf", type: "pdf" }
+                }
+            ]
+        },
+        family: {
+            title: "👨‍👩‍👧‍👦 Семейный чат",
+            participants: "Участники: Мама (админ), Папа, Сестра",
+            admin: "Мама",
+            messages: [
+                { sender: "Мама", text: "Нужно покормить кошку", time: "2023-05-09T09:15:00", outgoing: false },
+                { sender: "Вы", text: "Хорошо, я сегодня вечером зайду", time: "2023-05-09T09:20:00", outgoing: true },
+                { sender: "Сестра", text: "Я могу зайти днем", time: "2023-05-09T09:25:00", outgoing: false },
+                {
+                    sender: "Вы",
+                    text: "Фото кошки",
+                    time: "2023-05-09T09:30:00",
+                    outgoing: true,
+                    file: { name: "Кошка.jpg", type: "image" }
+                }
+            ]
+        },
+        friends: {
+            title: "Друзья",
+            participants: "Участники: Влад, Дима, Катя",
+            admin: "Влад",
+            messages: [
+                { sender: "Влад", text: "Пойдем гулять?", time: "2023-05-08T18:45:00", outgoing: false },
+                { sender: "Вы", text: "Куда?", time: "2023-05-08T18:50:00", outgoing: true },
+                { sender: "Дима", text: "Может в парк?", time: "2023-05-08T18:52:00", outgoing: false },
+                { sender: "Катя", text: "Я за!", time: "2023-05-08T18:53:00", outgoing: false }
+            ]
+        },
+        study: {
+            title: "📚 Учебная группа",
+            participants: "Участники: Алексей (админ), Иван, Ольга",
+            admin: "Алексей",
+            messages: [
+                { sender: "Алексей", text: "Нужно срочно сдать курсач!", time: "2023-05-07T14:10:00", outgoing: false },
+                { sender: "Вы", text: "Я уже почти закончил", time: "2023-05-07T14:15:00", outgoing: true },
+                { sender: "Иван", text: "А я даже не начинал 😅", time: "2023-05-07T14:20:00", outgoing: false },
+                {
+                    sender: "Ольга",
+                    text: "Вот пример работы",
+                    time: "2023-05-07T14:25:00",
+                    outgoing: false,
+                    file: { name: "Пример.docx", type: "doc" }
+                }
+            ]
+        }
+    };
+
+    let currentChatId = null;
+    let selectedFile = null;
+    let currentUser = "Alexey Samsonov";
+    let currentAction = null;
+    let actionData = null;
+
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        // Настройка поиска сообщений
+        document.getElementById('search-messages').addEventListener('input', searchMessages);
+        document.getElementById('date-from').addEventListener('change', searchMessages);
+        document.getElementById('date-to').addEventListener('change', searchMessages);
+        document.getElementById('sender-filter').addEventListener('change', searchMessages);
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function selectChat(chatId) {
+        currentChatId = chatId;
+
+        // Обновляем активный элемент в списке чатов
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.chatId === chatId) {
+                item.classList.add('active');
+            }
+        });
+
+        // Показываем окно чата
+        document.getElementById('no-chat').classList.add('hidden');
+        document.getElementById('active-chat').classList.remove('hidden');
+
+        // Загружаем данные чата
+        const chat = chats[chatId];
+        document.getElementById('chat-title').textContent = chat.title;
+        document.getElementById('chat-participants').textContent = chat.participants;
+        document.getElementById('chat-name-input').value = chat.title;
+
+        // Обновляем фильтр отправителей
+        updateSenderFilter(chat);
+
+        // Очищаем поля поиска
+        document.getElementById('search-messages').value = '';
+        document.getElementById('date-from').value = '';
+        document.getElementById('date-to').value = '';
+        document.getElementById('sender-filter').value = '';
+        document.getElementById('search-results-info').textContent = '';
+
+        // Загружаем сообщения
+        loadMessages(chat.messages);
+    }
+
+    function updateSenderFilter(chat) {
+        const senderFilter = document.getElementById('sender-filter');
+
+        // Оставляем только первый вариант (Все отправители)
+        while (senderFilter.options.length > 1) {
+            senderFilter.remove(1);
+        }
+
+        // Собираем уникальных отправителей
+        const senders = new Set();
+        chat.messages.forEach(msg => {
+            senders.add(msg.sender);
+        });
+
+        // Добавляем отправителей в фильтр
+        senders.forEach(sender => {
+            const option = document.createElement('option');
+            option.value = sender;
+            option.textContent = sender;
+            senderFilter.appendChild(option);
+        });
+    }
+
+    function loadMessages(messages, highlightText = '') {
+        const messagesContainer = document.getElementById('chat-messages');
+        messagesContainer.innerHTML = '';
+
+        messages.forEach(msg => {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${msg.outgoing ? 'message-outgoing' : 'message-incoming'}`;
+
+            let messageText = msg.text;
+            if (highlightText && msg.text.toLowerCase().includes(highlightText.toLowerCase())) {
+                const regex = new RegExp(highlightText, 'gi');
+                messageText = msg.text.replace(regex, match => `<span class="highlight">${match}</span>`);
+            }
+
+            let messageContent = `
+                ${!msg.outgoing ? `<div class="message-sender">${msg.sender}</div>` : ''}
+                <div>${messageText}</div>
+            `;
+
+            if (msg.file) {
+                const fileIcon = msg.file.type === 'pdf' ? '📄' :
+                               msg.file.type === 'image' ? '🖼️' : '📎';
+                messageContent += `
+                    <div class="file-message">
+                        <span class="file-icon">${fileIcon}</span>
+                        <span class="file-name">${msg.file.name}</span>
+                    </div>
+                `;
+            }
+
+            const messageDate = new Date(msg.time);
+            const timeString = messageDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            messageContent += `<div class="message-time">${timeString}</div>`;
+
+            messageElement.innerHTML = messageContent;
+            messagesContainer.appendChild(messageElement);
+        });
+
+        // Прокручиваем вниз
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function searchMessages() {
+        if (!currentChatId) return;
+
+        const searchText = document.getElementById('search-messages').value;
+        const dateFrom = document.getElementById('date-from').value;
+        const dateTo = document.getElementById('date-to').value;
+        const sender = document.getElementById('sender-filter').value;
+
+        const chat = chats[currentChatId];
+        let filteredMessages = [...chat.messages];
+
+        // Фильтрация по отправителю
+        if (sender) {
+            filteredMessages = filteredMessages.filter(msg => msg.sender === sender);
+        }
+
+        // Фильтрация по дате
+        if (dateFrom) {
+            const fromDate = new Date(dateFrom);
+            filteredMessages = filteredMessages.filter(msg => new Date(msg.time) >= fromDate);
+        }
+
+        if (dateTo) {
+            const toDate = new Date(dateTo);
+            toDate.setDate(toDate.getDate() + 1); // Включаем весь выбранный день
+            filteredMessages = filteredMessages.filter(msg => new Date(msg.time) < toDate);
+        }
+
+        // Поиск по тексту
+        if (searchText) {
+            filteredMessages = filteredMessages.filter(msg =>
+                msg.text.toLowerCase().includes(searchText.toLowerCase())
+            );
+        }
+
+        // Показываем результаты
+        loadMessages(filteredMessages, searchText);
+
+        // Информация о результатах поиска
+        let infoText = '';
+        if (searchText || dateFrom || dateTo || sender) {
+            infoText = `Найдено сообщений: ${filteredMessages.length}`;
+            if (filteredMessages.length === 0) {
+                infoText += ' (нет результатов)';
+            }
+        }
+        document.getElementById('search-results-info').textContent = infoText;
+    }
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            selectedFile = {
+                name: file.name,
+                type: file.type.split('/')[0] === 'image' ? 'image' :
+                      file.type === 'application/pdf' ? 'pdf' : 'doc'
+            };
+            alert(`Файл "${file.name}" готов к отправке!`);
+        }
+    }
+
+    function sendMessage() {
+        if (!currentChatId) return;
+
+        const input = document.getElementById('message-input');
+        const text = input.value.trim();
+
+        if (!text && !selectedFile) return;
+
+        // Добавляем сообщение в демо-данные
+        const now = new Date();
+        const timeString = now.toISOString();
+
+        const newMessage = {
+            sender: "Вы",
+            text: text || (selectedFile ? "Прикреплён файл" : ""),
+            time: timeString,
+            outgoing: true
+        };
+
+        if (selectedFile) {
+            newMessage.file = selectedFile;
+        }
+
+        chats[currentChatId].messages.push(newMessage);
+
+        // Очищаем поле ввода и сбрасываем файл
+        input.value = '';
+        selectedFile = null;
+        document.getElementById('file-input').value = '';
+
+        // Обновляем чат
+        selectChat(currentChatId);
+    }
+
+    function saveChatSettings() {
+        const newName = document.getElementById('chat-name-input').value;
+        if (currentChatId && newName) {
+            chats[currentChatId].title = newName;
+            document.getElementById('chat-title').textContent = newName;
+
+            // Обновляем название в списке чатов
+            document.querySelector(`.chat-item[data-chat-id="${currentChatId}"] strong`).textContent = newName;
+
+            closeModal('group-settings-modal');
+            alert("Настройки чата сохранены!");
+        }
+    }
+
+    function saveRoles() {
+        alert("Роли пользователей сохранены!");
+        closeModal('roles-modal');
+    }
+
+    function confirmRemoveUser(userName) {
+        currentAction = 'remove_user';
+        actionData = userName;
+
+        document.getElementById('confirmation-title').textContent = 'Удаление участника';
+        document.getElementById('confirmation-message').textContent = `Вы уверены, что хотите удалить ${userName} из чата?`;
+
+        document.getElementById('confirm-action-btn').onclick = function() {
+            removeUser(userName);
+            closeModal('confirmation-modal');
+        };
+
+        openModal('confirmation-modal');
+    }
+
+    function removeUser(userName) {
+        if (!currentChatId) return;
+
+        // В реальном приложении здесь была бы логика удаления пользователя
+        alert(`Пользователь ${userName} удалён из чата`);
+        closeModal('remove-participants-modal');
+
+        // Обновляем список участников
+        const chat = chats[currentChatId];
+        chat.participants = chat.participants.replace(userName, '').replace(/,\s*,/, ',');
+        document.getElementById('chat-participants').textContent = chat.participants;
+    }
+
+    function confirmDeleteChat() {
+        if (!currentChatId) return;
+
+        const chat = chats[currentChatId];
+
+        // Проверяем, является ли текущий пользователь администратором
+        if (chat.admin !== currentUser) {
+            alert("Только администратор может удалить чат!");
+            return;
+        }
+
+        currentAction = 'delete_chat';
+
+        document.getElementById('confirmation-title').textContent = 'Удаление чата';
+        document.getElementById('confirmation-message').textContent = `Вы уверены, что хотите удалить чат "${chat.title}"? Это действие нельзя отменить.`;
+
+        document.getElementById('confirm-action-btn').onclick = function() {
+            deleteChat();
+            closeModal('confirmation-modal');
+            closeModal('group-settings-modal');
+        };
+
+        openModal('confirmation-modal');
+    }
+
+    function deleteChat() {
+        if (!currentChatId) return;
+
+        // В реальном приложении здесь была бы логика удаления чата
+        alert(`Чат "${chats[currentChatId].title}" удалён`);
+
+        // Сбрасываем текущий чат
+        document.getElementById('no-chat').classList.remove('hidden');
+        document.getElementById('active-chat').classList.add('hidden');
+
+        // Удаляем чат из списка
+        const chatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
+        if (chatItem) {
+            chatItem.remove();
+        }
+
+        // Удаляем чат из данных
+        delete chats[currentChatId];
+        currentChatId = null;
+    }
+
+    function generateChatReport() {
+        if (!currentChatId) return;
+
+        const chat = chats[currentChatId];
+        const reportContent = document.getElementById('report-content');
+
+        // Форматируем дату создания отчёта
+        const now = new Date();
+        const reportDate = now.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        let reportHTML = `
+            <h3>${chat.title}</h3>
+            <p><strong>Дата создания отчёта:</strong> ${reportDate}</p>
+            <p><strong>Участники:</strong> ${chat.participants}</p>
+            <p><strong>Всего сообщений:</strong> ${chat.messages.length}</p>
+            <hr/>
+            <h4>Статистика активности:</h4>
+            <ul>
+        `;
+
+        // Собираем статистику по участникам
+        const participantsStats = {};
+        chat.messages.forEach(msg => {
+            if (!msg.outgoing) {
+                participantsStats[msg.sender] = (participantsStats[msg.sender] || 0) + 1;
+            }
+        });
+
+        // Преобразуем статистику в массив и сортируем по количеству сообщений
+        const sortedParticipants = Object.entries(participantsStats)
+            .sort((a, b) => b[1] - a[1]);
+
+        sortedParticipants.forEach(([participant, count]) => {
+            reportHTML += `<li>${participant}: ${count} сообщений</li>`;
+        });
+
+        reportHTML += `
+            </ul>
+            <hr/>
+            <h4>Последние сообщения:</h4>
+        `;
+
+        // Добавляем последние 5 сообщений
+        const lastMessages = chat.messages.slice(-5);
+        lastMessages.forEach(msg => {
+            const messageDate = new Date(msg.time);
+            const dateString = messageDate.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            reportHTML += `
+                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #f3f4f6; border-radius: 8px;">
+                    <div><strong>${msg.sender}</strong> (${dateString})</div>
+                    <div>${msg.text}</div>
+                    ${msg.file ? `<div>📎 Прикреплён файл: ${msg.file.name}</div>` : ''}
+                </div>
+            `;
+        });
+
+        reportContent.innerHTML = reportHTML;
+
+        // Показываем окно отчёта
+        document.getElementById('report-window').classList.remove('hidden');
+    }
+
+    function closeReport() {
+        document.getElementById('report-window').classList.add('hidden');
+    }
+
+    // Обработка формы создания чата
+    document.getElementById('new-chat-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const chatName = document.getElementById('chat-name').value;
+      alert(`Чат "${chatName}" успешно создан!`);
+      closeModal('create-chat-modal');
+    });
+
+    // Отправка сообщения по Enter (но Shift+Enter - перенос строки)
+    document.getElementById('message-input')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    const users = [
+    { name: 'Анна Иванова', online: true },
+    { name: 'Павел Смирнов', online: false },
+    { name: 'Елена Котова', online: true },
+    { name: 'Никита Петров', online: false },
+    { name: 'Виктория Соловьева', online: true },
+  ];
+
+  function messageUser(name) {
+    alert(`Открыт чат с ${name}`);
+  }
+
+  function removeFriend(name) {
+    alert(`Вы удалили ${name} из друзей`);
+  }
+
+  function sendInvite() {
+    const name = document.getElementById('searchInput').value;
+    if (name.trim()) {
+      alert(`Приглашение отправлено пользователю "${name}"`);
+    }
+  }
+
+  function filterUsers() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const onlineOnly = document.getElementById('onlineOnly').checked;
+    const resultsDiv = document.getElementById('searchResults');
+    resultsDiv.innerHTML = '';
+
+    const filtered = users.filter(user => {
+      const matchesName = user.name.toLowerCase().includes(query);
+      const matchesStatus = !onlineOnly || user.online;
+      return matchesName && matchesStatus;
+    });
+
+    filtered.forEach(user => {
+      const div = document.createElement('div');
+      div.className = 'search-result-item';
+      div.innerHTML = `
+        <strong>${user.name}</strong> <span class="status ${user.online ? 'online' : 'offline'}">${user.online ? 'в сети' : 'не в сети'}</span>
+        <br/>
+        <button onclick="sendInviteTo('${user.name}')">➕ Пригласить</button>
+      `;
+      resultsDiv.appendChild(div);
+    });
+  }
+
+  function sendInviteTo(name) {
+    alert(`Приглашение отправлено пользователю "${name}"`);
+  }
+
+    function clearNotifications() {
+  const list = document.getElementById('notificationList');
+  list.innerHTML = '<div class="notification-item">Нет новых уведомлений</div>';
+}
+
+    function applyPreset(preset) {
+  const lang = document.getElementById('languageSelect');
+  const status = document.getElementById('statusCheckbox');
+  const invitable = document.getElementById('invitableCheckbox');
+
+  if (preset === 'default') {
+    lang.value = '0';           // Русский
+    status.checked = true;
+    invitable.checked = true;
+  } else if (preset === 'stealth') {
+    lang.value = '0';           // Русский
+    status.checked = false;
+    invitable.checked = false;
+  }
+  // При "custom" ничего не трогаем
+}
+
+    function saveSettings(event) {
+  event.preventDefault();
+
+  const username = document.getElementById('usernameInput').value;
+  const language = document.getElementById('languageSelect').value;
+  const isStatusShowed = document.getElementById('statusCheckbox').checked;
+  const isInvitable = document.getElementById('invitableCheckbox').checked;
+  const preset = document.getElementById('presetSelect').value;
+
+  console.log("Сохраняем настройки:");
+  console.log({
+    preset,
+    configuration_name: username,
+    interface_language: parseInt(language),
+    is_status_showed: isStatusShowed,
+    is_invitible: isInvitable
+  });
+
+  alert("Настройки сохранены!");
+}
+</script>
+</body>
+</html>

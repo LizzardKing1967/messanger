@@ -1,0 +1,82 @@
+  body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .auth-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .auth-container button:hover {
+            background-color: #45a049;
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 10px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 10px;
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            background-color: #fde8e8;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .error-field {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 2px;
+        }
+
+        #email-field {
+            display: none;
+        }

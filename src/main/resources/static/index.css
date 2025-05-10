@@ -1,237 +1,415 @@
-/* Общие стили */
-:root {
-    --primary-color: #3498db;
-    --secondary-color: #2980b9;
-    --success-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --light-color: #ecf0f1;
-    --dark-color: #2c3e50;
-    --text-color: #333;
-    --border-radius: 6px;
-    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s ease;
-}
-
+/* Основные стили для всех элементов */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: 'Inter', sans-serif;
 }
 
+/* Основные стили для body */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: #f5f7fa;
-    min-height: 100vh;
+    background-color: #f4f5f9;
+    color: #333;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Шапка */
-.header {
-    background-color: var(--dark-color);
-    color: white;
-    padding: 1rem 0;
-    box-shadow: var(--box-shadow);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+/* Брендинг */
+.branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
+.branding h1 {
+    font-size: 2rem;
+    font-family: 'Pacifico', cursive;
+    font-weight: 400;
+    color: #4f46e5;
+}
+
+/* Хедер */
+header.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    text-decoration: none;
-}
+        footer.footer {
+          background: #ffffff;
+          padding: 1rem;
+          text-align: center;
+          font-size: 0.875rem;
+          color: #777;
+          border-top: 1px solid #e5e7eb;
+        }
 
-.nav-buttons {
+/* Вкладки */
+.tabs {
     display: flex;
     gap: 1rem;
 }
 
-.nav-button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    text-decoration: none;
-    font-weight: 500;
-    transition: var(--transition);
-}
-
-.nav-button:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
-}
-
-.nav-button.active {
-    background-color: var(--success-color);
-}
-
-/* Основное содержимое */
-.container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-    flex: 1;
-}
-
-h1, h2, h3 {
-    color: var(--dark-color);
-    margin-bottom: 1rem;
-}
-
-h1 {
-    font-size: 2rem;
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
-}
-
-h2 {
-    font-size: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-/* Формы и элементы ввода */
-.form-container {
-    background-color: white;
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--box-shadow);
-}
-
-.filter-field {
-    margin-bottom: 1rem;
-}
-
-.filter-field label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-input, select, button, textarea {
-    width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
+.tab {
+    background: transparent;
+    border: none;
     font-size: 1rem;
-    transition: var(--transition);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+    cursor: pointer;
 }
 
-input:focus, select:focus, textarea:focus {
+.tab:hover {
+    background: #e0e7ff;
+}
+
+/* Кнопки */
+.circle-btn, .profile-btn, .logout-btn, .create-chat-btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    background: #6366f1;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.circle-btn:hover, .profile-btn:hover, .create-chat-btn:hover {
+    background: #4f46e5;
+}
+
+.logout-btn {
+    background-color: #f44336;
+    font-family: 'Inter', sans-serif;
+    margin-left: 10px;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Контент */
+main {
+    flex: 1;
+    padding: 2rem;
+}
+
+/* Чат-список */
+.chat-list {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.buttons-list {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chat-item {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb; /* Добавлена граница */
+    border-radius: 8px; /* Скругление углов */
+    background-color: #ffffff; /* Фон для лучшего контраста */
+}
+
+.chat-item strong {
+    font-size: 1.05rem;
+    color: #1f2937;
+}
+
+.chat-item span {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.chat-item:hover {
+  background-color: #f0f0f0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 0.5rem 0;
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal.create-chat-modal {
+    display: none; /* default hidden */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    position: relative;
+}
+
+.modal.create-chat-modal .modal-content {
+    background-color: #fff;
+    margin: 20px auto;
+    padding: 30px 40px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+}
+
+.modal.create-chat-modal .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.3s ease;
+}
+
+.modal.create-chat-modal .close-btn:hover {
+    color: #e74c3c;
+}
+
+/* Заголовок */
+.modal.create-chat-modal h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    color: #333;
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Список пользователей */
+#userList div {
+    padding: 10px 15px;
+    margin: 8px 0;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#userList div:hover {
+    background-color: #f0f8ff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#userList .selected {
+    background-color: #d0eaff;
+    border-color: #7abaff;
+    font-weight: 500;
+}
+/* Формы */
+.chat-form,
+#createChatForm {
+    max-width: 450px;
+    margin: 30px auto;
+    padding: 25px 30px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: box-shadow 0.3s ease;
+}
+
+.chat-form:hover,
+#createChatForm:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили полей формы */
+.chat-form input,
+.chat-form select,
+.chat-form textarea,
+#createChatForm input,
+#createChatForm select,
+#createChatForm textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+        margin-top: 15px;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #fafafa;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.chat-form input:focus,
+.chat-form select:focus,
+.chat-form textarea:focus,
+#createChatForm input:focus,
+#createChatForm select:focus,
+#createChatForm textarea:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    border-color: #7abaff;
+    background-color: #fff;
 }
 
-button {
-    background-color: var(--primary-color);
+/* Кнопка "Создать" */
+#createChatForm button[type="submit"],
+.chat-form button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+#createChatForm button[type="submit"]:hover,
+.chat-form button[type="submit"]:hover {
+    background-color: #357ac8;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Скроллинг списка пользователей */
+.user-list {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 15px;
+    background-color: white;
+}
+
+.modal.chat-messages-modal .modal-content {
+    background-color: #fff;
+    margin: 60px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+}
+
+.chat-messages-container {
+    min-height: 40vh; /* 40% от высоты экрана */
+    max-height: 60vh; /* чтобы не занимал слишком много */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 15px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  display: none;
+}
+
+#sendMessageForm {
+    display: flex;
+    gap: 10px;
+}
+
+#messageInput {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.send-btn {
+    padding: 8px 16px;
+    background-color: #4CAF50;
     color: white;
     border: none;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
-    font-weight: 500;
-    transition: var(--transition);
+    transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
+.send-btn:hover {
+    background-color: #45a049;
 }
 
-button:active {
-    transform: translateY(0);
-}
-
-.toggle-add-panel {
-    background-color: var(--success-color);
-    margin-bottom: 1rem;
-}
-
-.toggle-add-panel:hover {
-    background-color: #27ae60;
-}
-
-/* Списки */
-.list {
-    display: grid;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.user-item {
-    background-color: white;
-    padding: 1rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    position: relative;
-    transition: var(--transition);
-}
-
-.user-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-.delete-popup {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    background-color: var(--danger-color);
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    opacity: 0;
-    transition: var(--transition);
-}
-
-.user-item:hover .delete-popup {
-    opacity: 1;
-}
-
-.add-user-panel {
-    display: none;
-    margin-top: 1rem;
-}
-
-/* Подвал */
-footer {
-    background-color: var(--dark-color);
-    color: white;
-    text-align: center;
-    padding: 1.5rem;
-    margin-top: auto;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-    }
-    
-    .nav-buttons {
-        width: 100%;
-        flex-direction: column;
-    }
-    
-    .container {
-        padding: 0 1rem;
-    }
+/* Картинки */
+img {
+    height: 300px;
+    width: 300px; /* Исправлена ошибка с "weight" */
 }
