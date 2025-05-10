@@ -1,7 +1,7 @@
-package com.project.messanger.controller;
+package com.project.messanger.controllers;
 
 import com.project.messanger.entity.Message;
-import com.project.messanger.model.Message;
+
 import com.project.messanger.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
