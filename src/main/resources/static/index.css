@@ -410,6 +410,6 @@ hr {
 
 /* Картинки */
 img {
-    height: 300px;
-    width: 300px; /* Исправлена ошибка с "weight" */
+    height: 100px;
+    width: 100px; /* Исправлена ошибка с "weight" */
 }

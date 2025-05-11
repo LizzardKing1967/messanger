@@ -28,4 +28,6 @@ public class MessageService {
     public List<Message> getChatMessages(String groupChatName) {
         return messageRepository.findByGroupChatName(groupChatName);
     }
+
+
 }

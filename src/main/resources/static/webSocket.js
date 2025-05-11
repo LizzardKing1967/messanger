@@ -14,7 +14,31 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => console.error("Ошибка WebSocket инициализации:", error));
 });
 
-ffunction connectWebSocket(username) {
+window.sendWebSocketMessage = function(payload) {
+    if (stompClient && stompClient.connected) {
+        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
+    } else {
+        console.error("WebSocket не подключен.");
+    }
+};
+
+
+
+function handleIncomingMessage(msg) {
+    const chatName = msg.groupChatName;
+    const activeChat = document.getElementById('chatMessagesTitle')?.textContent.replace("Чат: ", "");
+
+    if (chatName === activeChat) {
+        const encryptedData = JSON.parse(msg.encryptedContent);
+        getCurrentUsername().then(async username => {
+            const aesKey = await decryptChatAesKey(await fetchChatEncryptedAesKey(chatName), username);
+            const messageElement = await createMessageElement(msg, aesKey);
+            document.getElementById('chatMessagesContainer').appendChild(messageElement);
+        });
+    }
+}
+
+function connectWebSocket(username) {
      const socket = new SockJS('/ws');
      stompClient = Stomp.over(socket);
 

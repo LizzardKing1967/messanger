@@ -22,9 +22,9 @@ public class ParticipantInChatRepository {
     }
 
 
-    public List<ParticipantInChat> findById_GroupChatName(String groupChatName) {
+    public List<ParticipantInChat> findByGroupChatName(String groupChatName) {
         return jdbcTemplate.query(
-                "SELECT * FROM find_participants_by_chat(?)",
+                "SELECT * FROM participant_in_chat WHERE group_chat_name = ?",
                 new ParticipantInChatRowMapper(),
                 groupChatName
         );

@@ -117,40 +117,60 @@ function logout() {
 
 
 
-    function fetchUserChats() {
-      fetch('/chats/myChats')
-        .then(res => res.json())
-        .then(chats => {
-          const chatList = document.getElementById("chatList");
-          chatList.innerHTML = "";
+    async function fetchUserChats() {
+        try {
+            const response = await fetch('/chats/myChats');
+            const chats = await response.json();
+            const chatList = document.getElementById("chatList");
+            chatList.innerHTML = "";
 
-          if (chats.length === 0) {
-            chatList.innerHTML = "<p>У вас пока нет чатов</p>";
-            return;
-          }
+            if (chats.length === 0) {
+                chatList.innerHTML = "<p>У вас пока нет чатов</p>";
+                return;
+            }
 
-          chats.forEach(chat => {
-            const chatItem = document.createElement("div");
-            chatItem.className = "chat-item";
+            const username = await getCurrentUsername();
 
-           chatItem.addEventListener('click', () => {
-               openChatMessagesModal(chat.name);  // Отправляем chat.name
-             });
+            for (const chat of chats) {
+                const chatItem = document.createElement("div");
+                chatItem.className = "chat-item";
 
-            chatItem.innerHTML = `
-              <div class="chat-title">${chat.name}${chat.groupType ? ' (группа)' : ''}</div>
-              <div class="chat-last-message">
-                <span class="author">${chat.lastMessageSender || "Нет сообщений"}:</span>
-                <span class="message">${chat.lastMessage || ""}</span>
-              </div>
+                chatItem.addEventListener("click", () => {
+                    openChatMessagesModal(chat.name);
+                });
+
+                // Попробуем расшифровать lastMessage, если он есть
+                let decryptedLastMessage = "";
+                if (chat.lastMessage) {
+                    try {
+                        const encryptedData = JSON.parse(chat.lastMessage);
+                        const encryptedKey = await fetchChatEncryptedAesKey(chat.name, username);
+                        const aesKey = await decryptChatAesKey(encryptedKey, username);
+                        decryptedLastMessage = await decryptMessage(
+                            encryptedData.ciphertext,
+                            encryptedData.iv,
+                            aesKey
+                        );
+                    } catch (e) {
+                        console.warn(`Не удалось расшифровать сообщение для чата "${chat.name}":`, e);
+                        decryptedLastMessage = "Не удалось расшифровать";
+                    }
+                }
+
+                chatItem.innerHTML = `
+                <div class="chat-title">${chat.name}${chat.groupType ? ' (группа)' : ''}</div>
+                <div class="chat-last-message">
+                    <span class="author">${chat.lastMessageSender || "Нет сообщений"}:</span>
+                    <span class="message">${escapeHtml(decryptedLastMessage)}</span>
+                </div>
             `;
 
-            chatList.appendChild(chatItem);
-          });
-        })
-        .catch(err => {
-          console.error("Ошибка при загрузке чатов:", err);
-        });
+                chatList.appendChild(chatItem);
+            }
+
+        } catch (err) {
+            console.error("Ошибка при загрузке чатов:", err);
+        }
     }
 
 let selectedUsernames = new Set();
@@ -296,6 +316,7 @@ async function createChat(event) {
 
 
 function openChatMessagesModal(chatName) {
+    window.currentChat = chatName;
     document.getElementById('chatMessagesTitle').textContent = `Чат: ${chatName}`;
     document.getElementById('chatMessagesModal').style.display = 'block';
     document.getElementById('modalOverlay').style.display = 'block';
@@ -308,54 +329,39 @@ function closeChatMessagesModal() {
     document.getElementById('chatMessagesContainer').innerHTML = '';
 }
 
-async function sendMessage(event) {
-    event.preventDefault();
+    async function sendMessage(event) {
+        event.preventDefault();
 
-    const messageInput = document.getElementById('messageInput');
-    const messageText = messageInput.value;
-    const chatTitle = document.getElementById('chatMessagesTitle').textContent.replace('Сообщения чата ', '');
-    const chatName = chatTitle.slice(5);
-    const username = await getCurrentUsername();
+        const messageInput = document.getElementById('messageInput');
+        const messageText = messageInput.value.trim();
+        if (!messageText) return;
 
-    if (!messageText.trim()) return;
+        const chatTitle = document.getElementById('chatMessagesTitle').textContent.replace('Чат: ', '');
+        const chatName = chatTitle;
 
-    try {
-        // 1. Получаем зашифрованный AES-ключ чата
-        const encryptedAesKey = await fetchChatEncryptedAesKey(chatName, username);
+        try {
+            const username = await getCurrentUsername();
+            const encryptedAesKey = await fetchChatEncryptedAesKey(chatName, username);
+            const aesKey = await decryptChatAesKey(encryptedAesKey, username);
+            const { ciphertextBase64, ivBase64 } = await encryptMessage(messageText, aesKey);
 
-        // 2. Дешифруем AES-ключ чата
-        const aesKey = await decryptChatAesKey(encryptedAesKey, username);
-
-        // 3. Шифруем сообщение
-        const { ciphertextBase64, ivBase64 } = await encryptMessage(messageText, aesKey);
-
-        // 4. Отправляем на сервер
-        const response = await fetch('/messages/sent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
+            const payload = {
                 groupChatName: chatName,
-                encryptedMessageContent: JSON.stringify({
+                senderUsername: username,
+                encryptedContent: JSON.stringify({
                     ciphertext: ciphertextBase64,
                     iv: ivBase64
                 })
-            })
-        });
+            };
 
-        if (response.ok) {
-            messageInput.value = ''; // Очищаем поле ввода
-            // Можно обновить список сообщений
-            loadChatMessages(chatName);
-        } else {
-            console.error('Ошибка отправки сообщения');
+            sendWebSocketMessage(payload);
+            messageInput.value = '';
+
+        } catch (error) {
+            console.error('Ошибка при отправке сообщения:', error);
+            alert('Не удалось отправить сообщение');
         }
-    } catch (error) {
-        console.error('Ошибка:', error);
-        alert('Не удалось отправить сообщение');
     }
-}
 
 async function fetchChatEncryptedAesKey(chatName) {
 const response = await fetch(`/keys/getEncryptedChatKey/${chatName}`, {
@@ -371,60 +377,46 @@ const response = await fetch(`/keys/getEncryptedChatKey/${chatName}`, {
     return await response.text();
 }
 
-async function loadChatMessages(chatName) {
-    try {
-        const username = await getCurrentUsername();
-        const container = document.getElementById('chatMessagesContainer');
-        container.innerHTML = '<div class="loading">Загрузка сообщений...</div>';
+    async function loadChatMessages(chatName) {
+        try {
+            const username = await getCurrentUsername();
+            const container = document.getElementById('chatMessagesContainer');
+            container.innerHTML = '<div class="loading">Загрузка сообщений...</div>';
 
-        // 1. Получаем зашифрованный AES-ключ чата
-        const encryptedAesKey = await fetchChatEncryptedAesKey(chatName);
+            // 1. Получаем зашифрованный AES-ключ чата
+            const encryptedAesKey = await fetchChatEncryptedAesKey(chatName);
 
-        if (!chatSubscriptions[chatName]) {
-            chatSubscriptions[chatName] = stompClient.subscribe(`/topic/messages/${chatName}`, async (msg) => {
+            // 2. Дешифруем AES-ключ чата своим приватным RSA-ключом
+            const aesKey = await decryptChatAesKey(encryptedAesKey, username);
+
+            // 3. Сохраняем ключ в IndexedDB для этого чата
+            await saveAesKeyToIndexedDB(chatName, aesKey);
+
+            // 4. Получаем историю сообщений
+            const response = await fetch(`/messages/${chatName}/history`);
+            if (!response.ok) throw new Error('Ошибка загрузки сообщений');
+
+            const messages = await response.json();
+            container.innerHTML = '';
+
+            // 5. Дешифруем и отображаем каждое сообщение
+            for (const msg of messages) {
                 try {
-                    const incoming = JSON.parse(msg.body);
-                    const key = await getAesKeyFromIndexedDB(chatName);
-                    const messageElement = await createMessageElement(incoming, key);
-                    document.getElementById("chatMessagesContainer").appendChild(messageElement);
+                    // Десериализуем JSON внутри encryptedContent
+                    //msg.encryptedContent = JSON.parse(msg.encryptedContent);
+
+                    const messageElement = await createMessageElement(msg, aesKey);
+                    container.appendChild(messageElement);
                 } catch (e) {
-                    console.error("Ошибка при обработке нового сообщения:", e);
-                    document.getElementById("chatMessagesContainer").appendChild(createErrorMessageElement(incoming));
+                    console.error('Ошибка дешифровки сообщения:', e);
+                    container.appendChild(createErrorMessageElement(msg));
                 }
-            });
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки чата:', error);
+            container.innerHTML = '<div class="error">Ошибка загрузки сообщений</div>';
         }
-
-        // 2. Дешифруем AES-ключ чата своим приватным RSA-ключом
-        const aesKey = await decryptChatAesKey(encryptedAesKey, username);
-
-        // 3. Сохраняем ключ в IndexedDB для этого чата
-        await saveAesKeyToIndexedDB(chatName, aesKey);
-
-        // 4. Получаем историю сообщений
-        const response = await fetch(`/messages/${chatName}/history`);
-        if (!response.ok) throw new Error('Ошибка загрузки сообщений');
-
-        const messages = await response.json();
-        container.innerHTML = '';
-
-        // 5. Дешифруем и отображаем каждое сообщение
-for (const msg of messages) {
-    try {
-        // Десериализуем JSON внутри encryptedContent
-        //msg.encryptedContent = JSON.parse(msg.encryptedContent);
-
-        const messageElement = await createMessageElement(msg, aesKey);
-        container.appendChild(messageElement);
-    } catch (e) {
-        console.error('Ошибка дешифровки сообщения:', e);
-        container.appendChild(createErrorMessageElement(msg));
     }
-}
-    } catch (error) {
-        console.error('Ошибка загрузки чата:', error);
-        container.innerHTML = '<div class="error">Ошибка загрузки сообщений</div>';
-    }
-}
 
 async function createMessageElement(msg, aesKey) {
     // encryptedContent уже строка, содержащая JSON — распарсим

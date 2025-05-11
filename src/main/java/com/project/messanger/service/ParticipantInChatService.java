@@ -31,7 +31,7 @@ public class ParticipantInChatService {
     }
 
     public List<ParticipantInChat> getAllParticipantsInChat(String groupChatName) {
-        return participantInChatRepository.findById_GroupChatName(groupChatName);
+        return participantInChatRepository.findByGroupChatName(groupChatName);
     }
 
     public List<ParticipantInChat> getUsersWithRoleUser() {

@@ -51,7 +51,7 @@ public class MessageRepository {
             SELECT username, group_chat_name, message_text, sent_at, status
             FROM message
             WHERE group_chat_name = ?
-            ORDER BY sent_at DESC
+            ORDER BY sent_at ASC 
             """;
 
         return jdbcTemplate.query(sql, MESSAGE_ROW_MAPPER, groupChatName);
