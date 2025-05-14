@@ -6,7 +6,6 @@ import com.project.messanger.dto.RegisterRequest;
 import com.project.messanger.entity.User;
 import com.project.messanger.repository.UserRepository;
 import com.project.messanger.utils.JwtUtil;
-import com.project.messanger.utils.EncryptKeysUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -53,7 +53,7 @@ CREATE TABLE public.file (
 
 CREATE TABLE public.group_chat (
 	group_chat_name varchar(50) NOT NULL,
-	creation_date date NOT NULL,
+	creation_date timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT pk_group_chat PRIMARY KEY (group_chat_name)
 );
 
@@ -84,6 +84,8 @@ CREATE TABLE public."user" (
 	status int4 NOT NULL,
 	key_version int4 DEFAULT 1 NULL,
 	rsa_public_key text DEFAULT '1' NULL,
+	"name" varchar(10) NULL,
+	last_name varchar(10) NULL,
 	CONSTRAINT pk_user PRIMARY KEY (username)
 );
 
@@ -99,7 +101,6 @@ CREATE TABLE public.file_in_chat (
 	file_name varchar(60) NOT NULL,
 	group_chat_name varchar(50) NOT NULL,
 	creation_date date NULL,
-	encrypted_key varchar(50) NULL,
 	status int4 DEFAULT 1 NULL,
 	CONSTRAINT pk_file_in_chat PRIMARY KEY (username, file_name, group_chat_name),
 	CONSTRAINT fk_file_name FOREIGN KEY (file_name) REFERENCES public.file(file_name),
@@ -124,6 +125,24 @@ CREATE TABLE public.friendship (
 );
 
 
+-- public.message определение
+
+-- Drop table
+
+-- DROP TABLE public.message;
+
+CREATE TABLE public.message (
+	username varchar(50) NOT NULL,
+	group_chat_name varchar(50) NOT NULL,
+	message_text text NOT NULL,
+	sent_at timestamp DEFAULT now() NOT NULL,
+	status int4 DEFAULT 1 NULL,
+	CONSTRAINT pk_message PRIMARY KEY (username, group_chat_name, sent_at),
+	CONSTRAINT fk_message_chat FOREIGN KEY (group_chat_name) REFERENCES public.group_chat(group_chat_name) ON UPDATE CASCADE,
+	CONSTRAINT fk_message_user FOREIGN KEY (username) REFERENCES public."user"(username)
+);
+
+
 -- public.notification определение
 
 -- Drop table
@@ -138,7 +157,6 @@ CREATE TABLE public.notification (
 	notification_type int4 NULL,
 	notification_text varchar(50) NULL,
 	notification_data date NULL,
-	CONSTRAINT pk_notification PRIMARY KEY (file_name, username, group_chat_name),
 	CONSTRAINT fk_file_name FOREIGN KEY (file_name) REFERENCES public.file(file_name),
 	CONSTRAINT fk_receiver_name FOREIGN KEY (username) REFERENCES public."user"(username)
 );
@@ -159,7 +177,8 @@ CREATE TABLE public.participant_in_chat (
 	encrypted_aes_key text DEFAULT '1' NOT NULL,
 	key_version text DEFAULT '1' NOT NULL,
 	CONSTRAINT pk_partipicant_in_chat PRIMARY KEY (group_chat_name, username),
-	CONSTRAINT fk_partipic_reference_group_ch FOREIGN KEY (group_chat_name) REFERENCES public.group_chat(group_chat_name),
+	CONSTRAINT fk_message_chat FOREIGN KEY (group_chat_name) REFERENCES public.group_chat(group_chat_name) ON UPDATE CASCADE,
+	CONSTRAINT fk_partipic_reference_group_ch FOREIGN KEY (group_chat_name) REFERENCES public.group_chat(group_chat_name) ON UPDATE CASCADE,
 	CONSTRAINT fk_partipic_reference_user FOREIGN KEY (username) REFERENCES public."user"(username),
 	CONSTRAINT fk_role_name FOREIGN KEY (role_name) REFERENCES public."role"(role_name)
 );

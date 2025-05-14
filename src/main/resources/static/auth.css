@@ -33,7 +33,7 @@
         .auth-container button {
             width: 100%;
             padding: 10px;
-            background-color: #4CAF50;
+            background-color: #4c68af;
             color: white;
             font-weight: bold;
             border: none;
@@ -42,7 +42,7 @@
         }
 
         .auth-container button:hover {
-            background-color: #45a049;
+            background-color: #4c68af;
         }
 
         .switch-link {
