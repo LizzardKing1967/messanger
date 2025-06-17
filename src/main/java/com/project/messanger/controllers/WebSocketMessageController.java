@@ -23,9 +23,8 @@ public class WebSocketMessageController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ParticipantInChatService participantInChatService;
 
-    @MessageMapping("/chat.sendMessage") // клиент шлёт на /app/chat.sendMessage
+    @MessageMapping("/chat.sendMessage")
     public void receiveMessage(@Payload Message message) {
-        // Сохраняем сообщение (или другую логику)
         Message savedMessage = messageService.sendTextMessage(
                 message.getSenderUsername(),
                 message.getGroupChatName(),

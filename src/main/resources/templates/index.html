@@ -6,6 +6,7 @@
     <title>Мессенджер</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js" onerror="console.error('SockJS загрузка не удалась');"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js" onerror="console.error('STOMP загрузка не удалась');"></script>
+    <script src="dbManager.js"></script>
     <script src="webSocket.js"></script>
     <script src="keyUtils.js"></script>
     <script src="index.js"></script>
@@ -17,7 +18,6 @@
 <body>
 <div class="branding">
     <h1>Sam's Secure</h1>
-    <img src="Tung_tung_tung_tung_tung_sahur.png">
 
 </div>
 <header class="header">
@@ -74,13 +74,14 @@
 
     <div id="chatMessagesModal" class="modal chat-messages-modal">
         <div class="modal-content">
-            <button onclick="closeChatMessagesModal()()" id="closeMessagesModal"  class="close-btn"  >X </button>
+            <button onclick="closeChatMessagesModal()" id="closeMessagesModal" class="close-btn">×</button>
             <h2 id="chatMessagesTitle">Сообщения чата</h2>
+
             <div id="chatMessagesContainer" class="chat-messages-container"></div>
 
             <form id="sendMessageForm" onsubmit="sendMessage(event)">
                 <input type="text" id="messageInput" placeholder="Введите сообщение..." required />
-                <button type="submit" class="send-btn">Отправить</button>
+                <button type="submit" class="send-btn">➤</button>
             </form>
         </div>
     </div>

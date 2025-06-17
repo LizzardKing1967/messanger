@@ -36,6 +36,8 @@ function handleIncomingMessage(msg) {
             document.getElementById('chatMessagesContainer').appendChild(messageElement);
         });
     }
+    updateLastMessagePreview(msg);
+
 }
 
 function connectWebSocket(username) {
@@ -70,13 +72,28 @@ function addChatItem(chat) {
     const chatItem = document.createElement("div");
     chatItem.className = "chat-item";
 
-    chatItem.innerHTML = `
-        <div class="chat-title">${chat.name}${chat.groupType ? ' (группа)' : ''}</div>
-        <div class="chat-last-message">
-            <span class="author">${chat.lastMessageSender || "Нет сообщений"}:</span>
-            <span class="message">${chat.lastMessage || ""}</span>
-        </div>
-    `;
+    const titleEl = document.createElement("div");
+    titleEl.className = "chat-title";
+    titleEl.textContent = chat.name + (chat.groupType ? " (группа)" : "");
+
+    const lastMessageEl = document.createElement("div");
+    lastMessageEl.className = "chat-last-message";
+
+    const authorSpan = document.createElement("span");
+    authorSpan.className = "author";
+    authorSpan.textContent = chat.lastMessageSender
+        ? `${chat.lastMessageSender}:`
+        : "Нет сообщений";
+
+    const messageSpan = document.createElement("span");
+    messageSpan.className = "message";
+    messageSpan.textContent = chat.lastMessage || "";
+
+    lastMessageEl.appendChild(authorSpan);
+    lastMessageEl.appendChild(messageSpan);
+
+    chatItem.appendChild(titleEl);
+    chatItem.appendChild(lastMessageEl);
 
     // Вставляем в начало, чтобы новый чат был сверху
     chatList.prepend(chatItem);
