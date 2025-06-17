@@ -1,34 +1,34 @@
-    const chatSubscriptions = {};
+const chatSubscriptions = {};
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.add('hidden');
-      });
-      document.getElementById(tabId).classList.remove('hidden');
-    }
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.add('hidden');
+  });
+  document.getElementById(tabId).classList.remove('hidden');
+}
 
-    async function logout() {
-        try {
-            const response = await fetch('/auth/logout', {
-                method: 'POST',
-                credentials: 'include' // Для отправки куки
-            });
+async function logout() {
+    try {
+        const response = await fetch('/auth/logout', {
+            method: 'POST',
+            credentials: 'include' // Для отправки куки
+        });
 
-            if (response.ok) {
-                window.location.href = '/auth.html';
-                localStorage.clear();
-            } else {
-                console.error('Logout failed');
-            }
-        } catch (error) {
-            console.error('Error during logout:', error);
+        if (response.ok) {
+            window.location.href = '/auth.html';
+            localStorage.clear();
+        } else {
+            console.error('Logout failed');
         }
+    } catch (error) {
+        console.error('Error during logout:', error);
     }
+}
 
-    function switchTab(tabName) {
-      document.querySelectorAll(".tab-content").forEach(section => section.classList.add("hidden"));
-      document.getElementById(tabName).classList.remove("hidden");
-    }
+function switchTab(tabName) {
+  document.querySelectorAll(".tab-content").forEach(section => section.classList.add("hidden"));
+  document.getElementById(tabName).classList.remove("hidden");
+}
 
 function logout() {
   fetch("/auth/logout", {
@@ -53,125 +53,153 @@ function logout() {
     });
 }
     // Заглушка: получить друзей
-    async function fetchFriends() {
-      const response = await fetch("/api/friends", {
-        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-      });
-      const friends = await response.json();
-      renderUserList(friends, "friendList");
-    }
 
-    function renderUserList(users, containerId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
+async function fetchFriends() {
+  const response = await fetch("/api/friends", {
+    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+  });
+  const friends = await response.json();
+  renderUserList(friends, "friendList");
+}
 
-      if (!users.length) {
-        container.innerHTML = "<li>Ничего не найдено</li>";
-        return;
-      }
+function renderUserList(users, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
 
-      users.forEach(user => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${user.name} ${user.lastName} (${user.username}) - ${user.email}</span>
-          ${containerId === "searchResults" ? `<button onclick="addFriend('${user.id}')">Добавить</button>` : ""}
-        `;
-        container.appendChild(li);
-      });
-    }
+  if (!users.length) {
+    container.innerHTML = "<li>Ничего не найдено</li>";
+    return;
+  }
+
+  users.forEach(user => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${user.name} ${user.lastName} (${user.username}) - ${user.email}</span>
+      ${containerId === "searchResults" ? `<button onclick="addFriend('${user.id}')">Добавить</button>` : ""}
+    `;
+    container.appendChild(li);
+  });
+}
 
     // Поиск пользователей
-    async function searchUsers() {
-      const query = document.getElementById("searchInput").value;
-      const onlineOnly = document.getElementById("onlineOnly").checked;
+async function searchUsers() {
+  const query = document.getElementById("searchInput").value;
+  const onlineOnly = document.getElementById("onlineOnly").checked;
 
-      const params = new URLSearchParams({ query, onlineOnly });
-      const response = await fetch(`/api/users/search?${params}`, {
-        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-      });
+  const params = new URLSearchParams({ query, onlineOnly });
+  const response = await fetch(`/api/users/search?${params}`, {
+    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+  });
 
-      const results = await response.json();
-      renderUserList(results, "searchResults");
-    }
+  const results = await response.json();
+  renderUserList(results, "searchResults");
+}
 
-    async function addFriend(userId) {
-      const response = await fetch("/api/friends/invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({ userId })
-      });
+async function addFriend(userId) {
+  const response = await fetch("/api/friends/invite", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+    },
+    body: JSON.stringify({ userId })
+  });
 
-      const result = await response.json();
-      alert(result.message || "Пользователь приглашён в друзья");
-      searchUsers();
-    }
-
-
-    document.addEventListener("DOMContentLoaded", () => {
-      fetchUserChats(); // Загружаем чаты при старте
-     // fetchFriends();   // Твой текущий вызов
-    });
+  const result = await response.json();
+  alert(result.message || "Пользователь приглашён в друзья");
+  searchUsers();
+}
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  fetchUserChats(); // Загружаем чаты при старте
+ // fetchFriends();   // Твой текущий вызов
+});
 
-    async function fetchUserChats() {
-        try {
-            const response = await fetch('/chats/myChats');
-            const chats = await response.json();
-            const chatList = document.getElementById("chatList");
-            chatList.innerHTML = "";
 
-            if (chats.length === 0) {
-                chatList.innerHTML = "<p>У вас пока нет чатов</p>";
-                return;
-            }
 
-            const username = await getCurrentUsername();
+async function fetchUserChats() {
+    try {
+        const response = await fetch('/chats/myChats');
+        const chats = await response.json();
+        const chatList = document.getElementById("chatList");
+        chatList.innerHTML = "";
 
-            for (const chat of chats) {
-                const chatItem = document.createElement("div");
-                chatItem.className = "chat-item";
-
-                chatItem.addEventListener("click", () => {
-                    openChatMessagesModal(chat.name);
-                });
-
-                // Попробуем расшифровать lastMessage, если он есть
-                let decryptedLastMessage = "";
-                if (chat.lastMessage) {
-                    try {
-                        const encryptedData = JSON.parse(chat.lastMessage);
-                        const encryptedKey = await fetchChatEncryptedAesKey(chat.name, username);
-                        const aesKey = await decryptChatAesKey(encryptedKey, username);
-                        decryptedLastMessage = await decryptMessage(
-                            encryptedData.ciphertext,
-                            encryptedData.iv,
-                            aesKey
-                        );
-                    } catch (e) {
-                        console.warn(`Не удалось расшифровать сообщение для чата "${chat.name}":`, e);
-                        decryptedLastMessage = "Не удалось расшифровать";
-                    }
-                }
-
-                chatItem.innerHTML = `
-                <div class="chat-title">${chat.name}${chat.groupType ? ' (группа)' : ''}</div>
-                <div class="chat-last-message">
-                    <span class="author">${chat.lastMessageSender || "Нет сообщений"}:</span>
-                    <span class="message">${escapeHtml(decryptedLastMessage)}</span>
-                </div>
-            `;
-
-                chatList.appendChild(chatItem);
-            }
-
-        } catch (err) {
-            console.error("Ошибка при загрузке чатов:", err);
+        if (chats.length === 0) {
+            chatList.innerHTML = "<p>У вас пока нет чатов</p>";
+            return;
         }
+
+        const username = await getCurrentUsername();
+
+        for (const chat of chats) {
+            const chatItem = document.createElement("div");
+            chatItem.className = "chat-item";
+
+            chatItem.addEventListener("click", () => {
+                openChatMessagesModal(chat.name);
+            });
+
+            // Попробуем расшифровать lastMessage, если он есть
+            let decryptedLastMessage = "";
+            if (chat.lastMessage != null) {
+                try {
+                    const encryptedData = JSON.parse(chat.lastMessage);
+                    const encryptedKey = await fetchChatEncryptedAesKey(chat.name, username);
+                    const aesKey = await decryptChatAesKey(encryptedKey, username);
+                    decryptedLastMessage = await decryptMessage(
+                        encryptedData.ciphertext,
+                        encryptedData.iv,
+                        aesKey
+                    );
+                } catch (e) {
+                    console.warn(`Не удалось расшифровать сообщение для чата "${chat.name}":`, e);
+                    decryptedLastMessage = "Не удалось расшифровать";
+                }
+            }
+
+            chatItem.innerHTML = `
+            <div class="chat-title">${chat.name}${chat.groupType ? ' (группа)' : ''}</div>
+            <div class="chat-last-message">
+                <span class="author">${chat.lastMessageSender || "Нет сообщений"}:</span>
+                <span class="message">${escapeHtml(decryptedLastMessage)}</span>
+            </div>
+        `;
+
+            chatList.appendChild(chatItem);
+        }
+
+    } catch (err) {
+        console.error("Ошибка при загрузке чатов:", err);
     }
+}
+
+window.updateLastMessagePreview = async function updateLastMessagePreview(msg) {
+    try {
+        const chatName = msg.groupChatName;
+        const encryptedData = JSON.parse(msg.encryptedContent);
+        const username = window.currentUser || await getCurrentUsername();
+        const encryptedKey = await fetchChatEncryptedAesKey(chatName, username);
+        const aesKey = await decryptChatAesKey(encryptedKey, username);
+        const decryptedMessage = await decryptMessage(encryptedData.ciphertext, encryptedData.iv, aesKey);
+
+        // Найдём нужный элемент
+        const chatItems = document.querySelectorAll('.chat-item');
+        for (const item of chatItems) {
+            const title = item.querySelector('.chat-title')?.textContent.trim();
+            if (title?.startsWith(chatName)) {
+                const authorEl = item.querySelector('.chat-last-message .author');
+                const msgEl = item.querySelector('.chat-last-message .message');
+                if (authorEl) authorEl.textContent = msg.senderUsername + ":";
+                if (msgEl) msgEl.textContent = decryptedMessage;
+                break;
+            }
+        }
+
+    } catch (e) {
+        console.error("Ошибка обновления превью сообщения:", e);
+    }
+}
 
 let selectedUsernames = new Set();
 
@@ -329,39 +357,39 @@ function closeChatMessagesModal() {
     document.getElementById('chatMessagesContainer').innerHTML = '';
 }
 
-    async function sendMessage(event) {
-        event.preventDefault();
+async function sendMessage(event) {
+    event.preventDefault();
 
-        const messageInput = document.getElementById('messageInput');
-        const messageText = messageInput.value.trim();
-        if (!messageText) return;
+    const messageInput = document.getElementById('messageInput');
+    const messageText = messageInput.value.trim();
+    if (!messageText) return;
 
-        const chatTitle = document.getElementById('chatMessagesTitle').textContent.replace('Чат: ', '');
-        const chatName = chatTitle;
+    const chatTitle = document.getElementById('chatMessagesTitle').textContent.replace('Чат: ', '');
+    const chatName = chatTitle;
 
-        try {
-            const username = await getCurrentUsername();
-            const encryptedAesKey = await fetchChatEncryptedAesKey(chatName, username);
-            const aesKey = await decryptChatAesKey(encryptedAesKey, username);
-            const { ciphertextBase64, ivBase64 } = await encryptMessage(messageText, aesKey);
+    try {
+        const username = await getCurrentUsername();
+        const encryptedAesKey = await fetchChatEncryptedAesKey(chatName, username);
+        const aesKey = await decryptChatAesKey(encryptedAesKey, username);
+        const { ciphertextBase64, ivBase64 } = await encryptMessage(messageText, aesKey);
 
-            const payload = {
-                groupChatName: chatName,
-                senderUsername: username,
-                encryptedContent: JSON.stringify({
-                    ciphertext: ciphertextBase64,
-                    iv: ivBase64
-                })
-            };
+        const payload = {
+            groupChatName: chatName,
+            senderUsername: username,
+            encryptedContent: JSON.stringify({
+                ciphertext: ciphertextBase64,
+                iv: ivBase64
+            })
+        };
 
-            sendWebSocketMessage(payload);
-            messageInput.value = '';
+        sendWebSocketMessage(payload);
+        messageInput.value = '';
 
-        } catch (error) {
-            console.error('Ошибка при отправке сообщения:', error);
-            alert('Не удалось отправить сообщение');
-        }
+    } catch (error) {
+        console.error('Ошибка при отправке сообщения:', error);
+        alert('Не удалось отправить сообщение');
     }
+}
 
 async function fetchChatEncryptedAesKey(chatName) {
 const response = await fetch(`/keys/getEncryptedChatKey/${chatName}`, {
@@ -419,26 +447,48 @@ const response = await fetch(`/keys/getEncryptedChatKey/${chatName}`, {
     }
 
 async function createMessageElement(msg, aesKey) {
-    // encryptedContent уже строка, содержащая JSON — распарсим
     const encryptedData = JSON.parse(msg.encryptedContent);
 
-    // Дешифруем содержимое сообщения
     const decryptedText = await decryptMessage(
         encryptedData.ciphertext,
         encryptedData.iv,
         aesKey
     );
 
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message';
-    messageElement.innerHTML = `
-        <div class="message-header">
-            <span class="sender">${msg.senderUsername}</span>
-            <span class="time">${formatDateTime(msg.sendDate)}</span>
-        </div>
-        <div class="message-content">${escapeHtml(decryptedText)}</div>
-    `;
-    return messageElement;
+    // Создание контейнера для одного сообщения
+    const messageItem = document.createElement('div');
+    messageItem.className = 'message-item';
+
+    // Имя отправителя
+    const senderEl = document.createElement('div');
+    senderEl.className = 'message-sender';
+    senderEl.textContent = msg.senderUsername;
+
+    // Текст сообщения
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.textContent = decryptedText;
+
+    // Время отправки
+    const timeEl = document.createElement('div');
+    timeEl.className = 'message-time';
+    timeEl.textContent = formatDateTime(msg.sendDate);
+
+    // Добавление элементов в messageItem
+    messageItem.appendChild(senderEl);
+    messageItem.appendChild(textEl);
+    messageItem.appendChild(timeEl);
+
+    // Разделитель между сообщениями
+    const divider = document.createElement('div');
+    divider.className = 'message-divider';
+
+    // Обёртка, если нужно вставлять оба элемента (сообщение и разделитель)
+    const wrapper = document.createDocumentFragment();
+    wrapper.appendChild(messageItem);
+    wrapper.appendChild(divider);
+
+    return wrapper;
 }
 
 function createErrorMessageElement(msg) {

@@ -30,10 +30,6 @@ public class MessageController {
     @GetMapping("/{groupChatName}/history")
     public ResponseEntity<List<Message>> getChatMessages(@PathVariable String groupChatName) {
         List<Message> messages = messageService.getChatMessages(groupChatName);
-
-        // Выводим в консоль для отладки
-        messages.forEach(System.out::println);
-
         return ResponseEntity.ok(messages);
     }
 
